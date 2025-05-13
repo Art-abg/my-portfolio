@@ -131,7 +131,7 @@ const Footer = () => {
         
         <SocialLinks>
           <SocialIcon
-            href="https://github.com/yourusername"
+            href="https://github.com/Art-abg"
             target="_blank"
             rel="noopener noreferrer"
             whileHover="hover"
@@ -140,7 +140,7 @@ const Footer = () => {
             <FaGithub />
           </SocialIcon>
           <SocialIcon
-            href="https://www.linkedin.com/in/yourusername/"
+            href="https://linkedin.com/in/artur-abgaryan"
             target="_blank"
             rel="noopener noreferrer"
             whileHover="hover"
@@ -149,7 +149,7 @@ const Footer = () => {
             <FaLinkedin />
           </SocialIcon>
           <SocialIcon
-            href="https://twitter.com/yourusername"
+            href="https://twitter.com/art_abg"
             target="_blank"
             rel="noopener noreferrer"
             whileHover="hover"
@@ -158,7 +158,7 @@ const Footer = () => {
             <FaTwitter />
           </SocialIcon>
           <SocialIcon
-            href="mailto:your.email@example.com"
+            href="mailto:artur.abgaryan@example.com"
             target="_blank"
             rel="noopener noreferrer"
             whileHover="hover"
@@ -169,7 +169,7 @@ const Footer = () => {
         </SocialLinks>
         
         <FooterText>
-          © {new Date().getFullYear()} Your Name. All rights reserved.
+          &copy; {new Date().getFullYear()} Artur Abgaryan. All rights reserved.
         </FooterText>
       </FooterContent>
     </FooterContainer>

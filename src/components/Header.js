@@ -144,7 +144,7 @@ const IconsContainer = styled.div`
 const ThemeToggle = styled.button`
   background: ${({ theme }) => theme.colors.glassMorphism};
   border: ${({ theme }) => theme.colors.glassBorder};
-  color: ${({ theme }) => theme.colors.headerText};
+  color: ${({ theme }) => theme.isDark ? '#FFD700' : '#4F6BFF'};
   width: 42px;
   height: 42px;
   border-radius: 50%;
@@ -153,7 +153,7 @@ const ThemeToggle = styled.button`
   justify-content: center;
   cursor: pointer;
   font-size: 1.2rem;
-  box-shadow: ${({ theme }) => theme.shadows.cardLight};
+  box-shadow: ${({ theme }) => theme.isDark ? '0 3px 15px rgba(0, 0, 0, 0.3)' : theme.shadows.cardLight};
   transition: ${({ theme }) => theme.transitions.default};
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
@@ -167,7 +167,7 @@ const ThemeToggle = styled.button`
     left: -50%;
     width: 200%;
     height: 200%;
-    background: ${({ theme }) => theme.colors.gradientPrimary};
+    background: ${({ theme }) => theme.isDark ? 'radial-gradient(circle, rgba(255,215,0,0.2) 0%, rgba(255,215,0,0) 70%)' : 'radial-gradient(circle, rgba(79,107,255,0.2) 0%, rgba(79,107,255,0) 70%)'};
     opacity: 0;
     border-radius: 50%;
     transform: scale(0);
@@ -175,12 +175,11 @@ const ThemeToggle = styled.button`
   }
 
   &:hover {
-    box-shadow: ${({ theme }) => theme.shadows.cardHover};
-    color: ${({ theme }) => theme.colors.text};
+    box-shadow: ${({ theme }) => theme.isDark ? '0 5px 20px rgba(0, 0, 0, 0.4)' : theme.shadows.cardHover};
     transform: translateY(-3px);
     
     &::before {
-      opacity: 0.1;
+      opacity: 0.6;
       transform: scale(1);
     }
   }
@@ -193,6 +192,7 @@ const ThemeToggle = styled.button`
   svg {
     position: relative;
     z-index: 1;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
   }
 `;
 
@@ -369,9 +369,14 @@ const Overlay = styled(motion.div)`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.15);
   z-index: 998;
-  backdrop-filter: blur(3px);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px); /* For Safari */
+  /* Allow clicks but handle them in the onClick handler */
+  pointer-events: auto;
+  /* Make sure the body doesn't scroll behind */
+  touch-action: none;
 `;
 
 const Header = ({ currentTheme, toggleTheme }) => {
@@ -399,9 +404,12 @@ const Header = ({ currentTheme, toggleTheme }) => {
     document.body.style.overflow = !menuOpen ? 'hidden' : 'auto';
   };
 
-  const closeMenu = () => {
-    setMenuOpen(false);
-    document.body.style.overflow = 'auto';
+  const closeMenu = (e) => {
+    // Only close if clicking the overlay or close button
+    if (e.currentTarget === e.target || e.currentTarget.getAttribute('aria-label') === 'Close Menu') {
+      setMenuOpen(false);
+      document.body.style.overflow = 'auto';
+    }
   };
 
   return (
@@ -438,8 +446,9 @@ const Header = ({ currentTheme, toggleTheme }) => {
           onClick={toggleTheme} 
           aria-label="Toggle Theme"
           as={motion.button}
-          whileHover={{ scale: 1.1 }}
+          whileHover={{ scale: 1.1, y: -2 }}
           whileTap={{ scale: 0.95 }}
+          title={currentTheme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
         >
           {currentTheme === "light" ? <FaMoon /> : <FaSun />}
         </ThemeToggle>
