@@ -1,0 +1,490 @@
+import React from "react";
+import styled from "styled-components";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { TypeAnimation } from "react-type-animation";
+import { FaGithub, FaLinkedin, FaArrowDown } from "react-icons/fa";
+
+const HeroSection = styled.section`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 2rem;
+  background-color: ${({ theme }) => theme.colors.background};
+  position: relative;
+  min-height: calc(100vh - 60px);
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, ${({ theme }) => theme.colors.primary}10, transparent 70%);
+    opacity: 0.4;
+    z-index: 0;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -50%;
+    left: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, ${({ theme }) => theme.colors.accent}10, transparent 70%);
+    opacity: 0.3;
+    z-index: 0;
+  }
+`;
+
+const FloatingShapes = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+  opacity: 0.7;
+`;
+
+const FloatingShape = styled(motion.div)`
+  position: absolute;
+  background-color: ${({ theme }) => theme.colors.background};
+  box-shadow: ${({ theme }) => theme.shadows.card};
+  border-radius: ${props => props.round ? '50%' : '20%'};
+  z-index: 0;
+  opacity: ${props => props.opacity || 0.3};
+`;
+
+const HeroContent = styled.div`
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  max-width: 1200px;
+  width: 100%;
+  gap: 4rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 2rem;
+  }
+`;
+
+const ProfileImageContainer = styled(motion.div)`
+  position: relative;
+  width: 320px;
+  height: 320px;
+  padding: 10px;
+  border-radius: 50%;
+  background-color: ${({ theme }) => theme.colors.background};
+  box-shadow: ${({ theme }) => theme.shadows.card};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  @media (max-width: 768px) {
+    width: 220px;
+    height: 220px;
+  }
+`;
+
+const ProfileImage = styled.img`
+  width: calc(100% - 20px);
+  height: calc(100% - 20px);
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid ${({ theme }) => theme.colors.background};
+  background: ${({ theme }) => theme.colors.background};
+  box-shadow: ${({ theme }) => theme.colors.neumorphicInset};
+`;
+
+const ImageDecoration = styled(motion.div)`
+  position: absolute;
+  top: -15px;
+  left: -15px;
+  right: -15px;
+  bottom: -15px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, ${({ theme }) => theme.colors.primary}50, ${({ theme }) => theme.colors.accent}50);
+  z-index: -1;
+  opacity: 0.5;
+  filter: blur(10px);
+`;
+
+const HeroText = styled(motion.div)`
+  flex: 1;
+  text-align: left;
+  color: ${({ theme }) => theme.colors.text};
+
+  @media (max-width: 768px) {
+    text-align: center;
+  }
+`;
+
+const Greeting = styled(motion.p)`
+  font-size: 1.5rem;
+  color: ${({ theme }) => theme.colors.primary};
+  margin-bottom: 1rem;
+  font-family: ${({ theme }) => theme.fonts.headings};
+`;
+
+const Name = styled(motion.h1)`
+  font-size: 4.5rem;
+  margin-bottom: 1rem;
+  font-family: ${({ theme }) => theme.fonts.headings};
+  line-height: 1.2;
+  background: linear-gradient(90deg, ${({ theme }) => theme.colors.primary}, ${({ theme }) => theme.colors.accent});
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+  display: inline-block;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+  
+  @media (max-width: 768px) {
+    font-size: 2.8rem;
+  }
+`;
+
+const TypedText = styled.div`
+  font-size: 2.2rem;
+  color: ${({ theme }) => theme.colors.text};
+  margin-bottom: 2rem;
+  min-height: 3rem;
+  padding: 0.5rem 1.5rem;
+  border-radius: 12px;
+  background: ${({ theme }) => theme.colors.background};
+  box-shadow: ${({ theme }) => theme.colors.neumorphicInset};
+  display: inline-block;
+  font-weight: 600;
+  
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    padding: 0.4rem 1rem;
+  }
+`;
+
+const Description = styled(motion.p)`
+  font-size: 1.25rem;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  max-width: 600px;
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
+`;
+
+const ButtonGroup = styled(motion.div)`
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+
+  @media (max-width: 768px) {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+`;
+
+const PrimaryButton = styled(Link)`
+  padding: 1.2rem 2.5rem;
+  background-color: ${({ theme }) => theme.colors.background};
+  color: ${({ theme }) => theme.colors.text};
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  box-shadow: ${({ theme }) => theme.shadows.card};
+  transition: ${({ theme }) => theme.transitions.default};
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, ${({ theme }) => theme.colors.primary}, ${({ theme }) => theme.colors.accent});
+    transition: ${({ theme }) => theme.transitions.slow};
+    z-index: -1;
+    opacity: 0.8;
+  }
+  
+  &:hover {
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: ${({ theme }) => theme.shadows.cardHover};
+    
+    &:before {
+      width: 100%;
+    }
+  }
+  
+  &:active {
+    transform: translateY(1px);
+    box-shadow: ${({ theme }) => theme.colors.neumorphicInset};
+  }
+`;
+
+const SecondaryButton = styled(Link)`
+  padding: 1.2rem 2.5rem;
+  background-color: ${({ theme }) => theme.colors.background};
+  color: ${({ theme }) => theme.colors.text};
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  box-shadow: ${({ theme }) => theme.colors.neumorphicInset};
+  transition: ${({ theme }) => theme.transitions.default};
+  display: inline-flex;
+  align-items: center;
+
+  &:hover {
+    box-shadow: ${({ theme }) => theme.shadows.card};
+    transform: translateY(-3px);
+    color: ${({ theme }) => theme.colors.primary};
+  }
+  
+  &:active {
+    transform: translateY(1px);
+    box-shadow: ${({ theme }) => theme.colors.neumorphicInset};
+  }
+`;
+
+const SocialLinks = styled(motion.div)`
+  display: flex;
+  gap: 1.5rem;
+
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
+`;
+
+const SocialIcon = styled(motion.a)`
+  font-size: 1.2rem;
+  color: ${({ theme }) => theme.colors.text};
+  background: ${({ theme }) => theme.colors.background};
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: ${({ theme }) => theme.shadows.card};
+  transition: ${({ theme }) => theme.transitions.default};
+  
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary};
+    box-shadow: ${({ theme }) => theme.shadows.cardHover};
+    transform: translateY(-5px);
+  }
+  
+  &:active {
+    box-shadow: ${({ theme }) => theme.colors.neumorphicInset};
+    transform: translateY(2px);
+  }
+`;
+
+const ScrollIndicator = styled(motion.div)`
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: ${({ theme }) => theme.colors.text};
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  cursor: pointer;
+  background: ${({ theme }) => theme.colors.background};
+  box-shadow: ${({ theme }) => theme.shadows.card};
+  transition: ${({ theme }) => theme.transitions.default};
+  
+  &:hover {
+    box-shadow: ${({ theme }) => theme.shadows.cardHover};
+    color: ${({ theme }) => theme.colors.primary};
+    transform: translate(-50%, -5px);
+  }
+  
+  &:active {
+    box-shadow: ${({ theme }) => theme.colors.neumorphicInset};
+    transform: translate(-50%, 2px);
+  }
+`;
+
+const Home = () => {
+
+// Generate shapes with random properties for floating background elements
+  const shapes = [];
+  for (let i = 0; i < 10; i++) {
+    const size = Math.random() * 100 + 50;
+    shapes.push({
+      id: i,
+      x: Math.random() * 100 + '%',
+      y: Math.random() * 100 + '%',
+      size: size,
+      round: Math.random() > 0.5,
+      duration: Math.random() * 20 + 10,
+      opacity: Math.random() * 0.2 + 0.1
+    });
+  }
+
+  return (
+    <HeroSection>
+      <FloatingShapes>
+        {shapes.map(shape => (
+          <FloatingShape
+            key={shape.id}
+            style={{ 
+              top: shape.y, 
+              left: shape.x,
+              width: shape.size,
+              height: shape.size
+            }}
+            round={shape.round}
+            opacity={shape.opacity}
+            animate={{
+              x: ['-20px', '20px', '-20px'],
+              y: ['-20px', '20px', '-20px'],
+              rotate: [0, 180, 360],
+              scale: [1, 1.1, 1]
+            }}
+            transition={{
+              duration: shape.duration,
+              repeat: Infinity,
+              ease: 'easeInOut'
+            }}
+          />
+        ))}
+      </FloatingShapes>
+      <HeroContent>
+        <ProfileImageContainer
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.7, type: 'spring' }}
+          whileHover={{ scale: 1.05 }}
+          className="float-animation"
+        >
+          <ProfileImage
+            src="/avatar.jpg"
+            alt="Artur Abgaryan"
+          />
+          <ImageDecoration
+            animate={{
+              rotate: 360,
+              scale: [1, 1.1, 1]
+            }}
+            transition={{
+              rotate: {
+                duration: 20,
+                repeat: Infinity,
+                ease: "linear"
+              },
+              scale: {
+                duration: 5,
+                repeat: Infinity,
+                repeatType: 'reverse'
+              }
+            }}
+          />
+        </ProfileImageContainer>
+
+        <HeroText>
+          <Greeting
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            👋 Hi there, I'm
+          </Greeting>
+          <Name
+            initial={{ opacity: 0, y: 20 }}
+                2000,
+                "Next.js Developer",
+                2000,
+                "TypeScript Expert",
+                2000
+              ]}
+              wrapper="span"
+              repeat={Infinity}
+            />
+          </TypedText>
+          <Description
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            Highly motivated Front-End Developer specializing in React to build responsive, user-centric web interfaces. Passionate about leveraging modern web technologies and actively exploring Generative AI and automation tools to enhance development workflows and create innovative web solutions.
+          </Description>
+
+          <ButtonGroup
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+          >
+            <PrimaryButton to="/projects">View My Work</PrimaryButton>
+            <SecondaryButton to="/contact">Get in Touch</SecondaryButton>
+          </ButtonGroup>
+
+          <SocialLinks
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.8 }}
+          >
+            <SocialIcon
+              href="https://github.com/Art-abg"
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.2, rotate: 5 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <FaGithub />
+            </SocialIcon>
+            <SocialIcon
+              href="https://linkedin.com/in/artur-abgaryan"
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.2, rotate: -5 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <FaLinkedin />
+            </SocialIcon>
+          </SocialLinks>
+        </HeroText>
+      </HeroContent>
+
+      <ScrollIndicator
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1, y: [0, 10, 0] }}
+        transition={{
+          duration: 1.5,
+          repeat: Infinity,
+          repeatType: "reverse"
+        }}
+        onClick={() =>
+          window.scrollTo({
+            top: window.innerHeight,
+            behavior: "smooth"
+          })
+        }
+      >
+        <FaArrowDown />
+      </ScrollIndicator>
+    </HeroSection>
+  );
+};
+
+export default Home;

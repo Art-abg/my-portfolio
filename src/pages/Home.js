@@ -1,177 +1,595 @@
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useTransform, useMotionValue, useSpring } from "framer-motion";
+import { TypeAnimation } from "react-type-animation";
+import { Helmet } from "react-helmet";
+import { useLazyLoad, useAnimationFrameLoop } from "../utils/optimizations";
+import { useTheme } from "styled-components";
+import { FiArrowDown, FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
+import profileImg from "../assets/Artur_profile_photo.png";
+
+// Styled components
+const HomeContainer = styled.div`
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+`;
 
 const HeroSection = styled.section`
+  min-height: 100vh;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6rem 2rem;
-  background-image: url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1772&q=80");
-  background-size: cover;
-  background-position: center;
-  position: relative;
-  min-height: calc(100vh - 60px);
-  margin-top: 60px; /* Adjust for fixed header */
+  padding: 0 2rem;
+  overflow: hidden;
+`;
 
-  &:before {
+const NeumorphicCard = styled(motion.div)`
+  background: ${({ theme }) => (theme && theme.colors ? theme.colors.cardBackground : '#e0e5ec')};
+  border-radius: 30px;
+  box-shadow: ${({ theme }) => (theme && theme.colors && theme.colors.neumorphicFlat ? theme.colors.neumorphicFlat : '2px 2px 5px rgba(0,0,0,0.1)')}; /* Restored, with fallback */
+  padding: 3rem;
+  max-width: 1200px;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+
+  @media (max-width: ${({ theme }) => (theme && theme.breakpoints ? theme.breakpoints.md : '992px')}) {
+    grid-template-columns: 1fr;
+    padding: 2rem;
+  }
+`;
+
+const ContentSection = styled(motion.div)`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  @media (max-width: ${({ theme }) => (theme && theme.breakpoints ? theme.breakpoints.md : '992px')}) {
+    order: 2;
+  }
+`;
+
+const ImageSection = styled(motion.div)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+
+  @media (max-width: ${({ theme }) => (theme && theme.breakpoints ? theme.breakpoints.md : '992px')}) {
+    order: 1;
+  }
+`;
+
+const NeumorphicImageContainer = styled(motion.div)`
+  width: 90%;
+  height: 90%;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: ${({ theme }) => (theme && theme.colors && theme.colors.neumorphicFlat ? theme.colors.neumorphicFlat : '2px 2px 5px rgba(0,0,0,0.1)')}; /* Restored, with fallback */
+
+  &::before {
     content: "";
     position: absolute;
     top: 0;
-    right: 0;
-    bottom: 0;
     left: 0;
-    background-color: ${({ theme }) => theme.colors.backgroundAlt};
-    opacity: 0.7;
+    width: 100%;
+    height: 100%;
+    background: ${({ theme }) => (theme && theme.colors && theme.colors.gradientPrimary ? theme.colors.gradientPrimary : 'transparent')}; /* Restored, with fallback */
+    opacity: 0.1;
+    z-index: 0;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    border-radius: 15px;
+    box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1); /* TEMP DEBUG */
+    z-index: 0;
   }
 `;
 
-const HeroContent = styled.div`
+const ProfileImage = styled(motion.img)`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 20px;
   position: relative;
   z-index: 1;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  max-width: 1200px;
+`;
+
+const FloatingShapes = styled.div`
+  position: absolute;
   width: 100%;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-  }
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
 `;
 
-const ProfileImage = styled.img`
-  width: 300px;
-  height: 300px;
+const Shape = styled(motion.div)`
+  position: absolute;
+  background: ${({ color, theme }) => {
+    const primaryColor = theme && theme.colors && theme.colors.primary;
+    const baseColor = color || primaryColor || '#CCCCCC';
+    return `${String(baseColor)}10`;
+  }};
   border-radius: 50%;
-  object-fit: cover;
-  margin-right: 2rem;
-  box-shadow: ${({ theme }) => theme.shadows.card};
-  border: 5px solid ${({ theme }) => theme.colors.primary};
-
-  @media (max-width: 768px) {
-    margin-right: 0;
-    margin-bottom: 2rem;
-    width: 200px;
-    height: 200px;
-  }
+  z-index: 0;
 `;
 
-const HeroText = styled.div`
-  flex: 1;
-  text-align: left;
-  color: ${({ theme }) => theme.colors.text};
-
-  @media (max-width: 768px) {
-    text-align: center;
-  }
-`;
-
-const HeroTitle = styled(motion.h1)`
-  font-size: 3rem;
-  color: ${({ theme }) => theme.colors.text};
+const Name = styled(motion.h1)`
+  font-size: 3.5rem;
   margin-bottom: 1rem;
-  font-family: ${({ theme }) => theme.fonts.headings};
-  line-height: 1.2;
+  font-family: ${({ theme }) => (theme && theme.fonts ? theme.fonts.headings : 'sans-serif')};
+  background: ${({ theme }) => (theme && theme.colors && theme.colors.gradientPrimary ? theme.colors.gradientPrimary : '#4277FF')}; /* Restored, with fallback */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+  line-height: 1.1;
+  position: relative;
 
-  @media (max-width: 768px) {
+  @media (max-width: ${({ theme }) => (theme && theme.breakpoints ? theme.breakpoints.md : '992px')}) {
     font-size: 2.5rem;
   }
+
+  @media (max-width: ${({ theme }) => (theme && theme.breakpoints ? theme.breakpoints.sm : '768px')}) {
+    font-size: 2rem;
+  }
 `;
 
-const HeroSubtitle = styled(motion.p)`
-  font-size: 1.25rem;
-  color: ${({ theme }) => theme.colors.textSecondary};
+const Subtitle = styled(motion.div)`
+  font-size: 1.6rem;
+  color: ${({ theme }) => (theme && theme.colors ? theme.colors.textSecondary : '#555555')};
   margin-bottom: 2rem;
-  line-height: 1.6;
-  max-width: 600px;
+  font-family: ${({ theme }) => (theme && theme.fonts ? theme.fonts.body : 'sans-serif')};
+  position: relative;
 
-  @media (max-width: 768px) {
+  @media (max-width: ${({ theme }) => (theme && theme.breakpoints ? theme.breakpoints.sm : '768px')}) {
+    font-size: 1.3rem;
+  }
+`;
+
+const Description = styled(motion.p)`
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: ${({ theme }) => (theme && theme.colors ? theme.colors.text : '#333333')};
+  margin-bottom: 2rem;
+  max-width: 600px;
+  position: relative;
+
+  @media (max-width: ${({ theme }) => (theme && theme.breakpoints ? theme.breakpoints.sm : '768px')}) {
     font-size: 1rem;
   }
 `;
 
-const ButtonGroup = styled.div`
+const ButtonContainer = styled(motion.div)`
   display: flex;
-  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
 
-  @media (max-width: 768px) {
-    justify-content: center;
+  @media (max-width: ${({ theme }) => (theme && theme.breakpoints ? theme.breakpoints.sm : '768px')}) {
     flex-direction: column;
   }
 `;
 
-const CTAButton = styled(Link)`
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  background-color: ${({ theme }) => theme.colors.primary};
-  color: #ffffff;
-  text-decoration: none;
-  border-radius: 5px;
-  font-weight: bold;
-  margin-right: 1rem;
-  transition: background-color 0.3s;
+const NeumorphicButton = styled(motion.button).withConfig({
+  shouldForwardProp: (prop) => !['$primary', 'primary'].includes(prop),
+})`
+  background: ${({ theme }) => (theme && theme.colors ? theme.colors.cardBackground : '#e0e5ec')};
+  color: ${({ theme, $primary }) => {
+    if (!theme || !theme.colors) return $primary ? '#fff' : '#333';
+    return $primary ? "#fff" : theme.colors.text;
+  }};
+  border: none;
+  border-radius: 12px;
+  padding: 0.8rem 1.5rem;
+  font-family: ${({ theme }) => (theme && theme.fonts ? theme.fonts.body : 'sans-serif')};
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: ${({ theme }) => (theme && theme.transitions ? theme.transitions.default : 'all 0.3s ease')};
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.1); /* TEMP DEBUG */
+
+  ${({ $primary, theme }) =>
+    $primary &&
+    theme && theme.colors &&
+    `
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: ${({ theme }) => (theme && theme.colors && theme.colors.gradientPrimary ? theme.colors.gradientPrimary : '#4277FF')}; /* Restored, with fallback */
+      opacity: 1;
+      z-index: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    & > * { /* Ensure text and icon are above gradient */
+      position: relative;
+      z-index: 1;
+    }
+  `}
 
   &:hover {
-    background-color: ${({ theme }) => theme.colors.primaryDark};
+    transform: translateY(-2px);
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.15); /* TEMP DEBUG */
+
+    ${({ $primary, theme }) =>
+      $primary &&
+      theme && theme.colors && // Ensure theme and colors are available for hover effect
+      `
+      &::before {
+        opacity: 0.85; /* Slightly fade gradient on hover for effect */
+      }
+    `}
   }
 
-  @media (max-width: 768px) {
-    margin-bottom: 1rem;
-    margin-right: 0;
+  &:active {
+    transform: translateY(1px);
+    box-shadow: inset 1px 1px 2px rgba(0,0,0,0.1); /* TEMP DEBUG */
+  }
+
+  svg {
+    font-size: 1.1rem;
+  }
+
+  @media (max-width: ${({ theme }) => (theme && theme.breakpoints ? theme.breakpoints.sm : '768px')}) {
+    width: 100%;
+    padding: 1rem;
   }
 `;
 
-const SecondaryButton = styled(Link)`
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  background-color: transparent;
-  color: ${({ theme }) => theme.colors.primary};
-  text-decoration: none;
-  border: 2px solid ${({ theme }) => theme.colors.primary};
-  border-radius: 5px;
-  font-weight: bold;
-  transition: background-color 0.3s, color 0.3s;
+const SocialContainer = styled(motion.div)`
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+`;
+
+const SocialButton = styled(motion.a)`
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: ${({ theme }) => (theme && theme.colors ? theme.colors.cardBackground : '#e0e5ec')};
+  color: ${({ theme }) => (theme && theme.colors ? theme.colors.text : '#333333')};
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.1); /* TEMP DEBUG */
+  transition: ${({ theme }) => (theme && theme.transitions ? theme.transitions.default : 'all 0.3s ease')};
+  cursor: pointer;
+  font-size: 1.2rem;
 
   &:hover {
-    background-color: ${({ theme }) => theme.colors.primary};
-    color: #ffffff;
+    transform: translateY(-3px);
+    color: ${({ theme }) => (theme && theme.colors ? theme.colors.primary : '#4277FF')};
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.15); /* TEMP DEBUG */
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: inset 1px 1px 2px rgba(0,0,0,0.1); /* TEMP DEBUG */
+  }
+`;
+
+const ScrollIndicator = styled(motion.div)`
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: ${({ theme }) => (theme && theme.colors ? theme.colors.textSecondary : '#555555')};
+  font-size: 0.9rem;
+
+  span {
+    margin-bottom: 0.5rem;
   }
 `;
 
 const Home = () => {
+  const theme = useTheme();
+
+  const containerRef = useRef(null);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const handleMouseMove = (e) => {
+    const { left, top, width, height } =
+      containerRef.current.getBoundingClientRect();
+    const x = (e.clientX - left) / width - 0.5;
+    const y = (e.clientY - top) / height - 0.5;
+
+    mouseX.set(x);
+    mouseY.set(y);
+  };
+
+  const rotateX = useTransform(mouseY, [-0.5, 0.5], [10, -10]);
+  const rotateY = useTransform(mouseX, [-0.5, 0.5], [-10, 10]);
+
+  const springConfig = { stiffness: 150, damping: 20 };
+  const springRotateX = useSpring(rotateX, springConfig);
+  const springRotateY = useSpring(rotateY, springConfig);
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.3,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+      },
+    },
+  };
+
+  const imageVariants = {
+    hidden: { opacity: 0, scale: 0.9 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        delay: 0.4,
+      },
+    },
+  };
+
+  const shapes = [
+    {
+      size: 120,
+      x: "10%",
+      y: "20%",
+      duration: 20,
+      color: theme.colors.primary,
+    },
+    { size: 80, x: "70%", y: "70%", duration: 25, color: theme.colors.accent },
+    {
+      size: 150,
+      x: "80%",
+      y: "15%",
+      duration: 30,
+      color: theme.colors.primaryLight,
+    },
+    {
+      size: 60,
+      x: "30%",
+      y: "80%",
+      duration: 22,
+      color: theme.colors.accentLight,
+    },
+    {
+      size: 100,
+      x: "90%",
+      y: "50%",
+      duration: 28,
+      color: theme.colors.primary,
+    },
+  ];
+
   return (
-    <HeroSection>
-      <HeroContent>
-        <ProfileImage
-          src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80"
-          alt="Your Name"
+    <>
+      <Helmet>
+        <title>Art Abgaryan | Portfolio</title>
+        <meta
+          name="description"
+          content="Welcome to Art Abgaryan's portfolio. I am a front-end developer specializing in creating beautiful and functional web experiences."
         />
-        <HeroText>
-          <HeroTitle
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1 }}
+      </Helmet>
+
+      <HomeContainer>
+        <FloatingShapes>
+          {shapes.map((shape, index) => (
+            <Shape
+              key={index}
+              color={shape.color}
+              style={{
+                width: shape.size,
+                height: shape.size,
+                left: shape.x,
+                top: shape.y,
+              }}
+              animate={{
+                x: [20, -20, 20],
+                y: [10, -10, 10],
+                rotate: [0, 360],
+              }}
+              transition={{
+                duration: shape.duration,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+            />
+          ))}
+        </FloatingShapes>
+
+        <HeroSection>
+          <NeumorphicCard
+            ref={containerRef}
+            onMouseMove={!isMobile ? handleMouseMove : undefined}
+            style={
+              !isMobile
+                ? {
+                    rotateX: springRotateX,
+                    rotateY: springRotateY,
+                    perspective: 1000,
+                  }
+                : {}
+            }
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
           >
-            Hello, I'm Your Name
-          </HeroTitle>
-          <HeroSubtitle
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.5 }}
-          >
-            I'm a passionate software developer specializing in front-end
-            development. I love building beautiful and functional web
-            applications.
-          </HeroSubtitle>
-          <ButtonGroup>
-            <CTAButton to="/projects">View My Work</CTAButton>
-            <SecondaryButton to="/contact">Get in Touch</SecondaryButton>
-          </ButtonGroup>
-        </HeroText>
-      </HeroContent>
-    </HeroSection>
+            <ContentSection variants={containerVariants}>
+              <Name variants={itemVariants}>Hi, I'm Art Abgaryan</Name>
+
+              <Subtitle variants={itemVariants}>
+                <TypeAnimation
+                  sequence={[
+                    "Front-end Developer",
+                    2000,
+                    "UX/UI Designer",
+                    2000,
+                    "Creative Problem Solver",
+                    2000,
+                  ]}
+                  wrapper="span"
+                  speed={50}
+                  repeat={Infinity}
+                  style={{ display: "inline-block" }}
+                />
+              </Subtitle>
+
+              <Description variants={itemVariants}>
+                I craft beautiful digital experiences with a focus on
+                performance, accessibility, and user delight. My passion lies in
+                building innovative solutions that make a difference.
+              </Description>
+
+              <ButtonContainer variants={itemVariants}>
+                <NeumorphicButton
+                  $primary
+                  whileTap={{ scale: 0.98 }}
+                  whileHover={{
+                    boxShadow: "2px 2px 4px rgba(0,0,0,0.15)", /* TEMP DEBUG */
+                  }}
+                >
+                  View My Work
+                </NeumorphicButton>
+
+                <NeumorphicButton
+                  whileTap={{ scale: 0.98 }}
+                  whileHover={{
+                    boxShadow: "2px 2px 4px rgba(0,0,0,0.15)", /* TEMP DEBUG */
+                  }}
+                >
+                  Contact Me
+                </NeumorphicButton>
+              </ButtonContainer>
+
+              <SocialContainer variants={itemVariants}>
+                <SocialButton
+                  href="https://github.com"
+                  target="_blank"
+                  whileHover={{ y: -5, color: theme.colors.primary }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <FiGithub />
+                </SocialButton>
+
+                <SocialButton
+                  href="https://linkedin.com"
+                  target="_blank"
+                  whileHover={{ y: -5, color: theme.colors.primary }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <FiLinkedin />
+                </SocialButton>
+
+                <SocialButton
+                  href="mailto:contact@example.com"
+                  whileHover={{ y: -5, color: theme.colors.primary }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <FiMail />
+                </SocialButton>
+              </SocialContainer>
+            </ContentSection>
+
+            <ImageSection variants={imageVariants}>
+              <NeumorphicImageContainer
+                animate={{
+                  boxShadow: [
+                    "1px 1px 3px rgba(0,0,0,0.1)", /* TEMP DEBUG */
+                    "2px 2px 4px rgba(0,0,0,0.15)", /* TEMP DEBUG */
+                    "1px 1px 3px rgba(0,0,0,0.1)", /* TEMP DEBUG */
+                  ],
+                }}
+                transition={{
+                  duration: 5,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                }}
+              >
+                <ProfileImage
+                  src={profileImg}
+                  alt="Art Abgaryan"
+                  animate={{ scale: [1, 1.02, 1] }}
+                  transition={{
+                    duration: 5,
+                    repeat: Infinity,
+                    repeatType: "reverse",
+                  }}
+                />
+              </NeumorphicImageContainer>
+            </ImageSection>
+          </NeumorphicCard>
+        </HeroSection>
+
+        <ScrollIndicator
+          animate={{
+            y: [0, 10, 0],
+            opacity: [1, 0.5, 1],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        >
+          <span>Scroll Down</span>
+          <FiArrowDown />
+        </ScrollIndicator>
+      </HomeContainer>
+    </>
   );
 };
 
