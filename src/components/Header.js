@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaMoon, FaSun, FaBars, FaTimes } from "react-icons/fa";
+import { FaMoon, FaSun, FaBars, FaTimes, FaHome, FaUser, FaProjectDiagram, FaEnvelope } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 
 const HeaderContainer = styled.header`
@@ -203,7 +203,11 @@ const Hamburger = styled.button`
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  display: none;
+  display: flex;
+  
+  @media (min-width: 769px) {
+    display: none;
+  }
   align-items: center;
   justify-content: center;
   cursor: pointer;
@@ -266,13 +270,14 @@ const MobileMenu = styled(motion.div)`
   display: flex;
   flex-direction: column;
   padding: 2.5rem;
-  z-index: ${({ theme }) => theme.zIndices.modal};
+  z-index: 1000; /* Higher than the overlay to ensure it's on top */
   box-shadow: ${({ theme }) => theme.shadows.mobileMenu};
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
   border-left: ${({ theme }) => theme.colors.glassBorder};
   overflow-y: auto;
   will-change: transform;
+  pointer-events: auto; /* Ensure clicks work on mobile menu */
 `;
 
 const MobileNavList = styled.ul`
@@ -288,13 +293,15 @@ const MobileNavItem = styled.li``;
 const MobileNavLink = styled(Link)`
   color: ${({ theme, $isActive }) => $isActive ? theme.colors.primary : theme.colors.headerText};
   text-decoration: none;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   transition: ${({ theme }) => theme.transitions.default};
   font-family: ${({ theme }) => theme.fonts.body};
   padding: 0.8rem 1.2rem;
   border-radius: 12px;
-  display: inline-block;
-  background-color: ${({ theme, $isActive }) => $isActive ? `${theme.colors.primary}10` : 'transparent'};
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: ${({ theme, $isActive }) => $isActive ? `${theme.colors.primary}15` : 'transparent'};
   box-shadow: ${({ theme, $isActive }) => $isActive ? theme.colors.neumorphicInset : 'none'};
   width: 100%;
   
@@ -369,14 +376,11 @@ const Overlay = styled(motion.div)`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.15);
-  z-index: 998;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 999;
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px); /* For Safari */
-  /* Allow clicks but handle them in the onClick handler */
-  pointer-events: auto;
-  /* Make sure the body doesn't scroll behind */
-  touch-action: none;
+  pointer-events: auto; /* Allows the overlay to receive clicks */
 `;
 
 const Header = ({ currentTheme, toggleTheme }) => {
@@ -405,8 +409,20 @@ const Header = ({ currentTheme, toggleTheme }) => {
   };
 
   const closeMenu = (e) => {
-    // Only close if clicking the overlay or close button
-    if (e.currentTarget === e.target || e.currentTarget.getAttribute('aria-label') === 'Close Menu') {
+    // Only prevent default if event exists (menu item click)
+    if (e) {
+      e.preventDefault();
+      setMenuOpen(false);
+      document.body.style.overflow = 'auto';
+      // Add a small delay to allow the menu to close before navigation
+      setTimeout(() => {
+        const href = e.currentTarget.getAttribute('href');
+        if (href) {
+          window.location.href = href;
+        }
+      }, 300);
+    } else {
+      // For overlay click (no event)
       setMenuOpen(false);
       document.body.style.overflow = 'auto';
     }
@@ -456,10 +472,11 @@ const Header = ({ currentTheme, toggleTheme }) => {
           onClick={handleMenuToggle} 
           aria-label="Menu"
           as={motion.button}
-          whileHover={{ scale: 1.1 }}
+          whileHover={{ scale: 1.1, y: -2 }}
           whileTap={{ scale: 0.95 }}
+          title="Open Menu"
         >
-          <FaBars />
+          <FaBars size={20} />
         </Hamburger>
       </IconsContainer>
       <AnimatePresence>
@@ -483,52 +500,57 @@ const Header = ({ currentTheme, toggleTheme }) => {
                 as={motion.button}
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.95 }}
+                title="Close Menu"
               >
-                <FaTimes />
+                <FaTimes size={20} />
               </CloseButton>
               <MobileNavList>
                 <MobileNavItem>
                   <MobileNavLink 
                     to="/" 
-                    onClick={closeMenu}
+                    onClick={(e) => closeMenu(e)}
                     $isActive={location.pathname === "/"}
                     as={motion.a}
                     whileHover={{ x: 10 }}
+                    whileTap={{ scale: 0.97 }}
                   >
-                    Home
+                    <FaHome size={18} /> Home
                   </MobileNavLink>
                 </MobileNavItem>
                 <MobileNavItem>
                   <MobileNavLink 
                     to="/about" 
-                    onClick={closeMenu}
+                    onClick={(e) => closeMenu(e)}
                     $isActive={location.pathname === "/about"}
                     as={motion.a}
                     whileHover={{ x: 10 }}
+                    whileTap={{ scale: 0.97 }}
                   >
-                    About
+                    <FaUser size={18} /> About
                   </MobileNavLink>
                 </MobileNavItem>
                 <MobileNavItem>
                   <MobileNavLink 
                     to="/projects" 
-                    onClick={closeMenu}
+                    onClick={(e) => closeMenu(e)}
                     $isActive={location.pathname === "/projects"}
                     as={motion.a}
                     whileHover={{ x: 10 }}
+                    whileTap={{ scale: 0.97 }}
                   >
-                    Projects
+                    <FaProjectDiagram size={18} /> Projects
                   </MobileNavLink>
                 </MobileNavItem>
                 <MobileNavItem>
                   <MobileNavLink 
                     to="/contact" 
-                    onClick={closeMenu}
+                    onClick={(e) => closeMenu(e)}
                     $isActive={location.pathname === "/contact"}
                     as={motion.a}
                     whileHover={{ x: 10 }}
+                    whileTap={{ scale: 0.97 }}
                   >
-                    Contact
+                    <FaEnvelope size={18} /> Contact
                   </MobileNavLink>
                 </MobileNavItem>
               </MobileNavList>

@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 import { motion, useTransform, useMotionValue, useSpring } from "framer-motion";
 import { TypeAnimation } from "react-type-animation";
 import { Helmet } from "react-helmet";
@@ -26,10 +27,14 @@ const HeroSection = styled.section`
 `;
 
 const NeumorphicCard = styled(motion.div)`
-  background: ${({ theme }) => (theme && theme.colors ? theme.colors.cardBackground : '#e0e5ec')};
+  background: ${({ theme }) =>
+    theme && theme.colors ? theme.colors.cardBackground : "#e0e5ec"};
   border-radius: 30px;
-  box-shadow: ${({ theme }) => (theme && theme.colors && theme.colors.neumorphicFlat ? theme.colors.neumorphicFlat : '2px 2px 5px rgba(0,0,0,0.1)')}; /* Restored, with fallback */
-  padding: 3rem;
+  box-shadow: ${({ theme }) =>
+    theme && theme.colors && theme.colors.neumorphicFlat
+      ? theme.colors.neumorphicFlat
+      : "2px 2px 5px rgba(0,0,0,0.1)"}; /* Restored, with fallback */
+  padding: 3.5rem;
   max-width: 1200px;
   width: 100%;
   position: relative;
@@ -38,17 +43,22 @@ const NeumorphicCard = styled(motion.div)`
   grid-template-columns: 1fr 1fr;
   gap: 3rem;
 
-  @media (max-width: ${({ theme }) => (theme && theme.breakpoints ? theme.breakpoints.md : '992px')}) {
+  @media (max-width: ${({ theme }) =>
+      theme && theme.breakpoints ? theme.breakpoints.md : "992px"}) {
     grid-template-columns: 1fr;
     padding: 2rem;
     max-width: 95%;
   }
-  
-  @media (max-width: ${({ theme }) => (theme && theme.breakpoints ? theme.breakpoints.sm : '576px')}) {
+
+  @media (max-width: ${({ theme }) =>
+      theme && theme.breakpoints ? theme.breakpoints.sm : "576px"}) {
     padding: 1.2rem;
     border-radius: 20px;
     gap: 1.5rem;
-    box-shadow: ${({ theme }) => (theme && theme.colors ? `0 8px 32px 0 ${theme.colors.shadowLight}` : '0 8px 32px 0 rgba(0, 0, 0, 0.1)')};    
+    box-shadow: ${({ theme }) =>
+      theme && theme.colors
+        ? `0 8px 32px 0 ${theme.colors.shadowLight}`
+        : "0 8px 32px 0 rgba(0, 0, 0, 0.1)"};
   }
 `;
 
@@ -57,7 +67,8 @@ const ContentSection = styled(motion.div)`
   flex-direction: column;
   justify-content: center;
 
-  @media (max-width: ${({ theme }) => (theme && theme.breakpoints ? theme.breakpoints.md : '992px')}) {
+  @media (max-width: ${({ theme }) =>
+      theme && theme.breakpoints ? theme.breakpoints.md : "992px"}) {
     order: 2;
   }
 `;
@@ -69,7 +80,8 @@ const ImageSection = styled(motion.div)`
   position: relative;
   z-index: 1;
 
-  @media (max-width: ${({ theme }) => (theme && theme.breakpoints ? theme.breakpoints.md : '992px')}) {
+  @media (max-width: ${({ theme }) =>
+      theme && theme.breakpoints ? theme.breakpoints.md : "992px"}) {
     order: 1;
   }
 `;
@@ -81,9 +93,13 @@ const NeumorphicImageContainer = styled(motion.div)`
   border-radius: 20px;
   position: relative;
   overflow: hidden;
-  box-shadow: ${({ theme }) => (theme && theme.colors && theme.colors.neumorphicFlat ? theme.colors.neumorphicFlat : '2px 2px 5px rgba(0,0,0,0.1)')}; /* Restored, with fallback */
-  
-  @media (max-width: ${({ theme }) => (theme && theme.breakpoints ? theme.breakpoints.sm : '576px')}) {
+  box-shadow: ${({ theme }) =>
+    theme && theme.colors && theme.colors.neumorphicFlat
+      ? theme.colors.neumorphicFlat
+      : "2px 2px 5px rgba(0,0,0,0.1)"}; /* Restored, with fallback */
+
+  @media (max-width: ${({ theme }) =>
+      theme && theme.breakpoints ? theme.breakpoints.sm : "576px"}) {
     aspect-ratio: 1/1.1;
   }
 
@@ -94,7 +110,10 @@ const NeumorphicImageContainer = styled(motion.div)`
     left: 0;
     width: 100%;
     height: 100%;
-    background: ${({ theme }) => (theme && theme.colors ? `linear-gradient(120deg, ${theme.colors.primary}40, ${theme.colors.accent}40)` : 'linear-gradient(120deg, #4277FF40, #6E9FFF40)')};
+    background: ${({ theme }) =>
+      theme && theme.colors
+        ? `linear-gradient(120deg, ${theme.colors.primary}40, ${theme.colors.accent}40)`
+        : "linear-gradient(120deg, #4277FF40, #6E9FFF40)"};
     opacity: 0.2;
     z-index: 0;
   }
@@ -107,7 +126,7 @@ const NeumorphicImageContainer = styled(motion.div)`
     right: 10px;
     bottom: 10px;
     border-radius: 15px;
-    box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1); /* TEMP DEBUG */
+    box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.1); /* TEMP DEBUG */
     z-index: 0;
   }
 `;
@@ -123,12 +142,16 @@ const ProfileImage = styled(motion.img)`
   filter: contrast(1.05) brightness(1.03);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   transition: filter 0.3s ease, transform 0.5s ease;
-  
-  @media (max-width: ${({ theme }) => (theme && theme.breakpoints ? theme.breakpoints.sm : '576px')}) {
+
+  @media (max-width: ${({ theme }) =>
+      theme && theme.breakpoints ? theme.breakpoints.sm : "576px"}) {
     border-radius: 12px;
   }
-  
-  ${({ theme }) => theme && theme.isDark && `
+
+  ${({ theme }) =>
+    theme &&
+    theme.isDark &&
+    `
     filter: contrast(1.05) brightness(1.05);
   `}
 `;
@@ -148,7 +171,7 @@ const Shape = styled(motion.div)`
   position: absolute;
   background: ${({ color, theme }) => {
     const primaryColor = theme && theme.colors && theme.colors.primary;
-    const baseColor = color || primaryColor || '#CCCCCC';
+    const baseColor = color || primaryColor || "#CCCCCC";
     return `${String(baseColor)}10`;
   }};
   border-radius: 50%;
@@ -158,8 +181,12 @@ const Shape = styled(motion.div)`
 const Name = styled(motion.h1)`
   font-size: 3.5rem;
   margin-bottom: 1rem;
-  font-family: ${({ theme }) => (theme && theme.fonts ? theme.fonts.headings : 'sans-serif')};
-  background: ${({ theme }) => (theme && theme.colors && theme.colors.gradientPrimary ? theme.colors.gradientPrimary : '#4277FF')}; /* Restored, with fallback */
+  font-family: ${({ theme }) =>
+    theme && theme.fonts ? theme.fonts.headings : "sans-serif"};
+  background: ${({ theme }) =>
+    theme && theme.colors && theme.colors.gradientPrimary
+      ? theme.colors.gradientPrimary
+      : "#4277FF"}; /* Restored, with fallback */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -167,23 +194,28 @@ const Name = styled(motion.h1)`
   line-height: 1.1;
   position: relative;
 
-  @media (max-width: ${({ theme }) => (theme && theme.breakpoints ? theme.breakpoints.md : '992px')}) {
+  @media (max-width: ${({ theme }) =>
+      theme && theme.breakpoints ? theme.breakpoints.md : "992px"}) {
     font-size: 2.5rem;
   }
 
-  @media (max-width: ${({ theme }) => (theme && theme.breakpoints ? theme.breakpoints.sm : '768px')}) {
+  @media (max-width: ${({ theme }) =>
+      theme && theme.breakpoints ? theme.breakpoints.sm : "768px"}) {
     font-size: 2rem;
   }
 `;
 
 const Subtitle = styled(motion.div)`
   font-size: 1.6rem;
-  color: ${({ theme }) => (theme && theme.colors ? theme.colors.textSecondary : '#555555')};
+  color: ${({ theme }) =>
+    theme && theme.colors ? theme.colors.textSecondary : "#555555"};
   margin-bottom: 2rem;
-  font-family: ${({ theme }) => (theme && theme.fonts ? theme.fonts.body : 'sans-serif')};
+  font-family: ${({ theme }) =>
+    theme && theme.fonts ? theme.fonts.body : "sans-serif"};
   position: relative;
 
-  @media (max-width: ${({ theme }) => (theme && theme.breakpoints ? theme.breakpoints.sm : '768px')}) {
+  @media (max-width: ${({ theme }) =>
+      theme && theme.breakpoints ? theme.breakpoints.sm : "768px"}) {
     font-size: 1.3rem;
   }
 `;
@@ -191,12 +223,14 @@ const Subtitle = styled(motion.div)`
 const Description = styled(motion.p)`
   font-size: 1.1rem;
   line-height: 1.6;
-  color: ${({ theme }) => (theme && theme.colors ? theme.colors.text : '#333333')};
+  color: ${({ theme }) =>
+    theme && theme.colors ? theme.colors.text : "#333333"};
   margin-bottom: 2rem;
   max-width: 600px;
   position: relative;
 
-  @media (max-width: ${({ theme }) => (theme && theme.breakpoints ? theme.breakpoints.sm : '768px')}) {
+  @media (max-width: ${({ theme }) =>
+      theme && theme.breakpoints ? theme.breakpoints.sm : "768px"}) {
     font-size: 1rem;
   }
 `;
@@ -206,7 +240,8 @@ const ButtonContainer = styled(motion.div)`
   gap: 1rem;
   margin-top: 2rem;
 
-  @media (max-width: ${({ theme }) => (theme && theme.breakpoints ? theme.breakpoints.sm : '768px')}) {
+  @media (max-width: ${({ theme }) =>
+      theme && theme.breakpoints ? theme.breakpoints.sm : "768px"}) {
     flex-direction: column;
     gap: 0.8rem;
     width: 100%;
@@ -214,20 +249,22 @@ const ButtonContainer = styled(motion.div)`
 `;
 
 const NeumorphicButton = styled(motion.button).withConfig({
-  shouldForwardProp: (prop) => !['$primary', 'primary'].includes(prop),
+  shouldForwardProp: (prop) =>
+    !["$primary", "primary", "to", "href"].includes(prop),
 })`
   background: ${({ theme, $primary }) => {
-    if (!theme || !theme.colors) return $primary ? '#4277FF' : '#e0e5ec';
+    if (!theme || !theme.colors) return $primary ? "#4277FF" : "#e0e5ec";
     return $primary ? theme.colors.primary : theme.colors.cardBackground;
   }};
   color: ${({ theme, $primary }) => {
-    if (!theme || !theme.colors) return $primary ? '#fff' : '#333';
+    if (!theme || !theme.colors) return $primary ? "#fff" : "#333";
     return $primary ? "#fff" : theme.colors.text;
   }};
   border: none;
   border-radius: 12px;
   padding: 0.8rem 1.5rem;
-  font-family: ${({ theme }) => (theme && theme.fonts ? theme.fonts.body : 'sans-serif')};
+  font-family: ${({ theme }) =>
+    theme && theme.fonts ? theme.fonts.body : "sans-serif"};
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
@@ -237,21 +274,23 @@ const NeumorphicButton = styled(motion.button).withConfig({
   gap: 0.5rem;
   position: relative;
   overflow: hidden;
-  transition: ${({ theme }) => (theme && theme.transitions ? theme.transitions.default : 'all 0.3s ease')};
+  transition: ${({ theme }) =>
+    theme && theme.transitions ? theme.transitions.default : "all 0.3s ease"};
   box-shadow: ${({ theme, $primary }) => {
-    if (!theme) return '1px 1px 3px rgba(0,0,0,0.1)';
-    return theme.isDark 
-      ? $primary 
-        ? '0 4px 15px rgba(66, 119, 255, 0.3)' 
-        : '0 4px 15px rgba(0, 0, 0, 0.2)'
-      : $primary 
-        ? '0 4px 15px rgba(66, 119, 255, 0.2)' 
-        : '0 4px 15px rgba(0, 0, 0, 0.1)';
+    if (!theme) return "1px 1px 3px rgba(0,0,0,0.1)";
+    return theme.isDark
+      ? $primary
+        ? "0 4px 15px rgba(66, 119, 255, 0.3)"
+        : "0 4px 15px rgba(0, 0, 0, 0.2)"
+      : $primary
+      ? "0 4px 15px rgba(66, 119, 255, 0.2)"
+      : "0 4px 15px rgba(0, 0, 0, 0.1)";
   }};
 
   ${({ $primary, theme }) =>
     $primary &&
-    theme && theme.colors &&
+    theme &&
+    theme.colors &&
     `
     &::before {
       content: '';
@@ -260,7 +299,10 @@ const NeumorphicButton = styled(motion.button).withConfig({
       left: 0;
       width: 100%;
       height: 100%;
-      background: ${({ theme }) => (theme && theme.colors && theme.colors.gradientPrimary ? theme.colors.gradientPrimary : '#4277FF')}; /* Restored, with fallback */
+      background: ${({ theme }) =>
+        theme && theme.colors && theme.colors.gradientPrimary
+          ? theme.colors.gradientPrimary
+          : "#4277FF"}; /* Restored, with fallback */
       opacity: 1;
       z-index: 0;
       transition: opacity 0.3s ease;
@@ -275,19 +317,20 @@ const NeumorphicButton = styled(motion.button).withConfig({
   &:hover {
     transform: translateY(-2px);
     box-shadow: ${({ theme, $primary }) => {
-      if (!theme) return '2px 2px 6px rgba(0,0,0,0.15)';
-      return theme.isDark 
-        ? $primary 
-          ? '0 6px 20px rgba(66, 119, 255, 0.4)' 
-          : '0 6px 20px rgba(0, 0, 0, 0.25)'
-        : $primary 
-          ? '0 6px 20px rgba(66, 119, 255, 0.3)' 
-          : '0 6px 20px rgba(0, 0, 0, 0.15)';
+      if (!theme) return "2px 2px 6px rgba(0,0,0,0.15)";
+      return theme.isDark
+        ? $primary
+          ? "0 6px 20px rgba(66, 119, 255, 0.4)"
+          : "0 6px 20px rgba(0, 0, 0, 0.25)"
+        : $primary
+        ? "0 6px 20px rgba(66, 119, 255, 0.3)"
+        : "0 6px 20px rgba(0, 0, 0, 0.15)";
     }};
 
     ${({ $primary, theme }) =>
       $primary &&
-      theme && theme.colors && // Ensure theme and colors are available for hover effect
+      theme &&
+      theme.colors && // Ensure theme and colors are available for hover effect
       `
       &::before {
         opacity: 0.85; /* Slightly fade gradient on hover for effect */
@@ -298,14 +341,14 @@ const NeumorphicButton = styled(motion.button).withConfig({
   &:active {
     transform: translateY(1px);
     box-shadow: ${({ theme, $primary }) => {
-      if (!theme) return 'inset 1px 1px 2px rgba(0,0,0,0.1)';
-      return theme.isDark 
-        ? $primary 
-          ? 'inset 1px 1px 5px rgba(0, 0, 0, 0.2), 0 2px 10px rgba(66, 119, 255, 0.3)'
-          : 'inset 1px 1px 5px rgba(0, 0, 0, 0.2)'
-        : $primary 
-          ? 'inset 1px 1px 3px rgba(0, 0, 0, 0.1), 0 2px 10px rgba(66, 119, 255, 0.2)'
-          : 'inset 1px 1px 3px rgba(0, 0, 0, 0.1)';
+      if (!theme) return "inset 1px 1px 2px rgba(0,0,0,0.1)";
+      return theme.isDark
+        ? $primary
+          ? "inset 1px 1px 5px rgba(0, 0, 0, 0.2), 0 2px 10px rgba(66, 119, 255, 0.3)"
+          : "inset 1px 1px 5px rgba(0, 0, 0, 0.2)"
+        : $primary
+        ? "inset 1px 1px 3px rgba(0, 0, 0, 0.1), 0 2px 10px rgba(66, 119, 255, 0.2)"
+        : "inset 1px 1px 3px rgba(0, 0, 0, 0.1)";
     }};
   }
 
@@ -313,7 +356,8 @@ const NeumorphicButton = styled(motion.button).withConfig({
     font-size: 1.1rem;
   }
 
-  @media (max-width: ${({ theme }) => (theme && theme.breakpoints ? theme.breakpoints.sm : '768px')}) {
+  @media (max-width: ${({ theme }) =>
+      theme && theme.breakpoints ? theme.breakpoints.sm : "768px"}) {
     width: 100%;
     padding: 0.9rem 1rem;
     font-size: 0.95rem;
@@ -334,22 +378,26 @@ const SocialButton = styled(motion.a)`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: ${({ theme }) => (theme && theme.colors ? theme.colors.cardBackground : '#e0e5ec')};
-  color: ${({ theme }) => (theme && theme.colors ? theme.colors.text : '#333333')};
-  box-shadow: 1px 1px 3px rgba(0,0,0,0.1); /* TEMP DEBUG */
-  transition: ${({ theme }) => (theme && theme.transitions ? theme.transitions.default : 'all 0.3s ease')};
+  background: ${({ theme }) =>
+    theme && theme.colors ? theme.colors.cardBackground : "#e0e5ec"};
+  color: ${({ theme }) =>
+    theme && theme.colors ? theme.colors.text : "#333333"};
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1); /* TEMP DEBUG */
+  transition: ${({ theme }) =>
+    theme && theme.transitions ? theme.transitions.default : "all 0.3s ease"};
   cursor: pointer;
   font-size: 1.2rem;
 
   &:hover {
     transform: translateY(-3px);
-    color: ${({ theme }) => (theme && theme.colors ? theme.colors.primary : '#4277FF')};
-    box-shadow: 2px 2px 4px rgba(0,0,0,0.15); /* TEMP DEBUG */
+    color: ${({ theme }) =>
+      theme && theme.colors ? theme.colors.primary : "#4277FF"};
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15); /* TEMP DEBUG */
   }
 
   &:active {
     transform: translateY(0);
-    box-shadow: inset 1px 1px 2px rgba(0,0,0,0.1); /* TEMP DEBUG */
+    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.1); /* TEMP DEBUG */
   }
 `;
 
@@ -361,7 +409,8 @@ const ScrollIndicator = styled(motion.div)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: ${({ theme }) => (theme && theme.colors ? theme.colors.textSecondary : '#555555')};
+  color: ${({ theme }) =>
+    theme && theme.colors ? theme.colors.textSecondary : "#555555"};
   font-size: 0.9rem;
 
   span {
@@ -527,7 +576,7 @@ const Home = () => {
             animate="visible"
           >
             <ContentSection variants={containerVariants}>
-              <Name variants={itemVariants}>Hi, I'm Art Abgaryan</Name>
+              <Name variants={itemVariants}>Hi, I'm Artur Abgaryan</Name>
 
               <Subtitle variants={itemVariants}>
                 <TypeAnimation
@@ -553,28 +602,40 @@ const Home = () => {
               </Description>
 
               <ButtonContainer variants={itemVariants}>
-                <NeumorphicButton
-                  $primary
-                  whileTap={{ scale: 0.98 }}
-                  whileHover={{
-                    y: -2,
-                    scale: 1.02,
-                    transition: { duration: 0.2 }
-                  }}
+                <Link
+                  to="/projects"
+                  style={{ textDecoration: "none", width: "100%" }}
                 >
-                  View My Work
-                </NeumorphicButton>
+                  <NeumorphicButton
+                    $primary
+                    as={motion.button}
+                    whileTap={{ scale: 0.98 }}
+                    whileHover={{
+                      y: -2,
+                      scale: 1.02,
+                      transition: { duration: 0.2 },
+                    }}
+                  >
+                    View My Work
+                  </NeumorphicButton>
+                </Link>
 
-                <NeumorphicButton
-                  whileTap={{ scale: 0.98 }}
-                  whileHover={{
-                    y: -2,
-                    scale: 1.02,
-                    transition: { duration: 0.2 }
-                  }}
+                <Link
+                  to="/contact"
+                  style={{ textDecoration: "none", width: "100%" }}
                 >
-                  Contact Me
-                </NeumorphicButton>
+                  <NeumorphicButton
+                    as={motion.button}
+                    whileTap={{ scale: 0.98 }}
+                    whileHover={{
+                      y: -2,
+                      scale: 1.02,
+                      transition: { duration: 0.2 },
+                    }}
+                  >
+                    Contact Me
+                  </NeumorphicButton>
+                </Link>
               </ButtonContainer>
 
               <SocialContainer variants={itemVariants}>
@@ -610,15 +671,15 @@ const Home = () => {
               <NeumorphicImageContainer
                 animate={{
                   boxShadow: [
-                    "1px 1px 3px rgba(0,0,0,0.1)", /* TEMP DEBUG */
-                    "2px 2px 4px rgba(0,0,0,0.15)", /* TEMP DEBUG */
-                    "1px 1px 3px rgba(0,0,0,0.1)", /* TEMP DEBUG */
+                    "1px 1px 3px rgba(0,0,0,0.1)" /* TEMP DEBUG */,
+                    "2px 2px 4px rgba(0,0,0,0.15)" /* TEMP DEBUG */,
+                    "1px 1px 3px rgba(0,0,0,0.1)" /* TEMP DEBUG */,
                   ],
                 }}
                 transition={{
                   repeat: Infinity,
                   duration: 5,
-                  ease: "easeInOut"
+                  ease: "easeInOut",
                 }}
               >
                 <ProfileImage
@@ -635,21 +696,6 @@ const Home = () => {
             </ImageSection>
           </NeumorphicCard>
         </HeroSection>
-
-        <ScrollIndicator
-          animate={{
-            y: [0, 10, 0],
-            opacity: [1, 0.5, 1],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        >
-          <span>Scroll Down</span>
-          <FiArrowDown />
-        </ScrollIndicator>
       </HomeContainer>
     </>
   );
