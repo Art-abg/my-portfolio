@@ -7,7 +7,7 @@ import {
   useLocation
 } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-import { Helmet } from "react-helmet";
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 import styled from "styled-components";
 
 // Styles and Themes
@@ -89,7 +89,7 @@ const AnimatedRoutes = () => {
   };
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="wait" initial={false}>
       <Suspense fallback={<LoadingSpinner fullPage />}>
         <Routes location={location} key={location.pathname}>
           <Route 
@@ -163,13 +163,14 @@ function App() {
   }
 
   return (
-    <ThemeProvider theme={theme === "light" ? lightTheme : darkTheme}>
-      <GlobalStyles />
+    <HelmetProvider>
+      <ThemeProvider theme={theme === "light" ? lightTheme : darkTheme}>
+        <GlobalStyles />
       <Helmet>
-        <title>Your Name | Portfolio</title>
+        <title>Artur Abgaryan | Portfolio</title>
         <meta
           name="description"
-          content="Portfolio of Your Name, a software developer specializing in front-end development."
+          content="Portfolio of Artur Abgaryan, a software developer specializing in front-end development."
         />
         <meta
           name="theme-color"
@@ -190,7 +191,12 @@ function App() {
           rel="stylesheet"
         />
       </Helmet>
-      <Router>
+      <Router
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true
+        }}
+      >
         <ErrorBoundary>
           <AppContainer>
             <Header currentTheme={theme} toggleTheme={toggleTheme} />
@@ -203,7 +209,8 @@ function App() {
           </AppContainer>
         </ErrorBoundary>
       </Router>
-    </ThemeProvider>
+      </ThemeProvider>
+    </HelmetProvider>
   );
 }
 

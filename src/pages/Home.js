@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { motion, useTransform, useMotionValue, useSpring } from "framer-motion";
 import { TypeAnimation } from "react-type-animation";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { useLazyLoad, useAnimationFrameLoop } from "../utils/optimizations";
 import { useTheme } from "styled-components";
 import { FiArrowDown, FiGithub, FiLinkedin, FiMail } from "react-icons/fi";

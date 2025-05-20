@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
-import { motion, AnimatePresence } from "framer-motion";
-import { FaMoon, FaSun, FaBars, FaTimes, FaHome, FaUser, FaProjectDiagram, FaEnvelope } from "react-icons/fa";
+import { motion, AnimatePresence, useAnimation } from "framer-motion";
+import { FaTimes, FaHome, FaUser, FaProjectDiagram, FaEnvelope } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
+import ToggleSwitch from "./common/ToggleSwitch";
+import Logo from "./Logo";
 
 const HeaderContainer = styled.header`
   width: 100%;
@@ -27,53 +29,12 @@ const HeaderContainer = styled.header`
   }
 `;
 
-const Logo = styled(Link)`
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: ${({ theme }) => theme.colors.headerText};
-  text-decoration: none;
-  font-family: ${({ theme }) => theme.fonts.headings};
-  position: relative;
-  z-index: 2;
-  transition: ${({ theme }) => theme.transitions.default};
+const LogoLink = styled(Link)`
   display: flex;
   align-items: center;
-
-  &:hover {
-    transform: scale(1.05);
-  }
-
-  span {
-    background: ${({ theme }) => theme.colors.gradientPrimary};
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-fill-color: transparent;
-    position: relative;
-    
-    &::after {
-      content: attr(data-text);
-      position: absolute;
-      left: 0;
-      top: 0;
-      z-index: -1;
-      background: ${({ theme }) => theme.colors.gradientAccent};
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-fill-color: transparent;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-  }
-  
-  &:hover span::after {
-    opacity: 1;
-  }
-  
-  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
-    font-size: 1.3rem;
-  }
+  text-decoration: none;
+  z-index: 2;
+  position: relative;
 `;
 
 const Nav = styled.nav`
@@ -141,51 +102,13 @@ const IconsContainer = styled.div`
   gap: 1.5rem;
 `;
 
-const ThemeToggle = styled.button`
-  background: ${({ theme }) => theme.colors.glassMorphism};
-  border: ${({ theme }) => theme.colors.glassBorder};
-  color: ${({ theme }) => theme.isDark ? '#FFD700' : '#4F6BFF'};
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
+const ThemeToggleWrapper = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 1.2rem;
-  box-shadow: ${({ theme }) => theme.isDark ? '0 3px 15px rgba(0, 0, 0, 0.3)' : theme.shadows.cardLight};
-  transition: ${({ theme }) => theme.transitions.default};
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  position: relative;
-  overflow: hidden;
+  margin-right: 1rem;
   
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: ${({ theme }) => theme.isDark ? 'radial-gradient(circle, rgba(255,215,0,0.2) 0%, rgba(255,215,0,0) 70%)' : 'radial-gradient(circle, rgba(79,107,255,0.2) 0%, rgba(79,107,255,0) 70%)'};
-    opacity: 0;
-    border-radius: 50%;
-    transform: scale(0);
-    transition: ${({ theme }) => theme.transitions.default};
-  }
-
-  &:hover {
-    box-shadow: ${({ theme }) => theme.isDark ? '0 5px 20px rgba(0, 0, 0, 0.4)' : theme.shadows.cardHover};
-    transform: translateY(-3px);
-    
-    &::before {
-      opacity: 0.6;
-      transform: scale(1);
-    }
-  }
-
-  &:active {
-    box-shadow: ${({ theme }) => theme.colors.neumorphicInset};
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
+    margin-right: 0.5rem;
     transform: translateY(1px);
   }
   
@@ -196,67 +119,47 @@ const ThemeToggle = styled.button`
   }
 `;
 
-const Hamburger = styled.button`
+const Hamburger = styled(motion.button)`
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 48px;
+  height: 48px;
   background: ${({ theme }) => theme.colors.glassMorphism};
   border: ${({ theme }) => theme.colors.glassBorder};
-  color: ${({ theme }) => theme.colors.headerText};
-  width: 42px;
-  height: 42px;
   border-radius: 50%;
-  display: flex;
-  
-  @media (min-width: 769px) {
-    display: none;
-  }
-  align-items: center;
-  justify-content: center;
   cursor: pointer;
-  font-size: 1.2rem;
-  box-shadow: ${({ theme }) => theme.shadows.cardLight};
-  transition: ${({ theme }) => theme.transitions.default};
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  padding: 0;
+  z-index: 100;
   position: relative;
-  overflow: hidden;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: ${({ theme }) => theme.colors.gradientAccent};
-    opacity: 0;
-    border-radius: 50%;
-    transform: scale(0);
-    transition: ${({ theme }) => theme.transitions.default};
-  }
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: ${({ theme }) => theme.shadows.sm};
+  transition: all 0.3s ease;
 
   &:hover {
-    box-shadow: ${({ theme }) => theme.shadows.cardHover};
-    color: ${({ theme }) => theme.colors.text};
-    transform: translateY(-3px);
-    
-    &::before {
-      opacity: 0.1;
-      transform: scale(1);
-    }
+    transform: translateY(-2px);
+    box-shadow: ${({ theme }) => theme.shadows.lg};
   }
 
   &:active {
-    box-shadow: ${({ theme }) => theme.colors.neumorphicInset};
-    transform: translateY(1px);
-  }
-  
-  svg {
-    position: relative;
-    z-index: 1;
+    transform: scale(0.95);
   }
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     display: flex;
   }
+`;
+
+const HamburgerLine = styled(motion.span)`
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: ${({ theme }) => theme.colors.text};
+  border-radius: 2px;
+  margin: 3px 0;
+  transform-origin: center;
 `;
 
 const MobileMenu = styled(motion.div)`
@@ -383,10 +286,14 @@ const Overlay = styled(motion.div)`
   pointer-events: auto; /* Allows the overlay to receive clicks */
 `;
 
-const Header = ({ currentTheme, toggleTheme }) => {
+const Header = ({ currentTheme = 'light', toggleTheme = () => {} }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const menuControls = useAnimation();
+  const hamburgerControls = useAnimation();
+  
+  const isDark = currentTheme === 'dark';
 
   // Add scroll effect to header
   useEffect(() => {
@@ -402,10 +309,30 @@ const Header = ({ currentTheme, toggleTheme }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleMenuToggle = () => {
-    setMenuOpen((prev) => !prev);
-    // Prevent scrolling when menu is open
-    document.body.style.overflow = !menuOpen ? 'hidden' : 'auto';
+  const handleMenuToggle = async () => {
+    if (!menuOpen) {
+      setMenuOpen(true);
+      document.body.style.overflow = 'hidden';
+      await menuControls.start({
+        x: 0,
+        transition: { type: 'spring', damping: 25, stiffness: 250 }
+      });
+      await hamburgerControls.start({
+        rotate: 180,
+        transition: { duration: 0.3 }
+      });
+    } else {
+      await menuControls.start({
+        x: '100%',
+        transition: { type: 'spring', damping: 25, stiffness: 250 }
+      });
+      setMenuOpen(false);
+      document.body.style.overflow = 'auto';
+      await hamburgerControls.start({
+        rotate: 0,
+        transition: { duration: 0.3 }
+      });
+    }
   };
 
   const closeMenu = (e) => {
@@ -430,9 +357,9 @@ const Header = ({ currentTheme, toggleTheme }) => {
 
   return (
     <HeaderContainer $scrolled={scrolled}>
-      <Logo to="/">
-        <span>Artur Abgaryan</span>
-      </Logo>
+      <LogoLink to="/" aria-label="Home">
+        <Logo />
+      </LogoLink>
       <Nav>
         <NavList>
           <NavItem>
@@ -458,25 +385,28 @@ const Header = ({ currentTheme, toggleTheme }) => {
         </NavList>
       </Nav>
       <IconsContainer>
-        <ThemeToggle 
-          onClick={toggleTheme} 
-          aria-label="Toggle Theme"
-          as={motion.button}
-          whileHover={{ scale: 1.1, y: -2 }}
-          whileTap={{ scale: 0.95 }}
-          title={currentTheme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
-        >
-          {currentTheme === "light" ? <FaMoon /> : <FaSun />}
-        </ThemeToggle>
+        <ThemeToggleWrapper>
+          <ToggleSwitch isDark={isDark} onToggle={toggleTheme} />
+        </ThemeToggleWrapper>
         <Hamburger 
           onClick={handleMenuToggle} 
-          aria-label="Menu"
-          as={motion.button}
-          whileHover={{ scale: 1.1, y: -2 }}
-          whileTap={{ scale: 0.95 }}
-          title="Open Menu"
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={menuOpen}
+          initial={false}
+          animate={hamburgerControls}
         >
-          <FaBars size={20} />
+          <HamburgerLine
+            animate={menuOpen ? { rotate: 45, y: 8, background: 'currentColor' } : { rotate: 0, y: 0 }}
+            transition={{ duration: 0.3 }}
+          />
+          <HamburgerLine
+            animate={menuOpen ? { opacity: 0 } : { opacity: 1 }}
+            transition={{ duration: 0.1 }}
+          />
+          <HamburgerLine
+            animate={menuOpen ? { rotate: -45, y: -8, background: 'currentColor' } : { rotate: 0, y: 0 }}
+            transition={{ duration: 0.3 }}
+          />
         </Hamburger>
       </IconsContainer>
       <AnimatePresence>
@@ -487,12 +417,13 @@ const Header = ({ currentTheme, toggleTheme }) => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={closeMenu}
+              transition={{ duration: 0.3 }}
             />
             <MobileMenu
               initial={{ x: "100%" }}
-              animate={{ x: 0 }}
+              animate={menuControls}
               exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 250 }}
+              transition={{ type: "spring", damping: 30, stiffness: 300 }}
             >
               <CloseButton 
                 onClick={closeMenu} 

@@ -150,7 +150,9 @@ const CategoryFilters = styled.div`
   margin: 2rem 0;
 `;
 
-const FilterButton = styled(motion.button)`
+const FilterButton = styled(motion.button).withConfig({
+  shouldForwardProp: (prop) => prop !== 'active',
+})`
   padding: 0.5rem 1.5rem;
   border: none;
   border-radius: 25px;
