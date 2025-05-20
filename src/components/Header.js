@@ -120,35 +120,22 @@ const ThemeToggleWrapper = styled.div`
 `;
 
 const Hamburger = styled(motion.button)`
-  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  margin-left: 1rem;
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 48px;
-  height: 48px;
-  background: ${({ theme }) => theme.colors.glassMorphism};
-  border: ${({ theme }) => theme.colors.glassBorder};
-  border-radius: 50%;
-  cursor: pointer;
-  padding: 0;
-  z-index: 100;
+  z-index: 1001;
   position: relative;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: ${({ theme }) => theme.shadows.sm};
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: ${({ theme }) => theme.shadows.lg};
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    display: flex;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  
+  @media (min-width: 769px) {
+    display: none;
   }
 `;
 
@@ -168,19 +155,20 @@ const MobileMenu = styled(motion.div)`
   right: 0;
   width: 80%;
   max-width: 300px;
-  height: 100%;
-  background-color: ${({ theme }) => theme.colors.mobileMenuBackground};
+  height: 100vh;
+  background: ${({ theme }) => theme.colors.background || 'rgba(255, 255, 255, 0.95)'};
   display: flex;
   flex-direction: column;
   padding: 2.5rem;
-  z-index: 1000; /* Higher than the overlay to ensure it's on top */
-  box-shadow: ${({ theme }) => theme.shadows.mobileMenu};
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border-left: ${({ theme }) => theme.colors.glassBorder};
+  z-index: 1000;
+  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
   will-change: transform;
-  pointer-events: auto; /* Ensure clicks work on mobile menu */
+  pointer-events: auto;
+  
+  @media (prefers-color-scheme: dark) {
+    background: ${({ theme }) => theme.colors.background || 'rgba(26, 32, 44, 0.97)'};
+  }
 `;
 
 const MobileNavList = styled.ul`
@@ -279,11 +267,10 @@ const Overlay = styled(motion.div)`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.6);
   z-index: 999;
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px); /* For Safari */
-  pointer-events: auto; /* Allows the overlay to receive clicks */
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
 `;
 
 const Header = ({ currentTheme = 'light', toggleTheme = () => {} }) => {
@@ -309,50 +296,66 @@ const Header = ({ currentTheme = 'light', toggleTheme = () => {} }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleMenuToggle = async () => {
+  const handleMenuToggle = async (e) => {
+    e.stopPropagation();
+    
     if (!menuOpen) {
+      // Open menu
       setMenuOpen(true);
       document.body.style.overflow = 'hidden';
-      await menuControls.start({
+      
+      // Set initial state for animation
+      await menuControls.set({ x: '100%' });
+      
+      // Animate menu in
+      menuControls.start({
         x: 0,
-        transition: { type: 'spring', damping: 25, stiffness: 250 }
+        transition: { type: 'tween', duration: 0.3, ease: 'easeInOut' }
       });
-      await hamburgerControls.start({
+      
+      // Animate hamburger icon
+      hamburgerControls.start({
         rotate: 180,
         transition: { duration: 0.3 }
       });
     } else {
+      // Close menu
       await menuControls.start({
         x: '100%',
         transition: { type: 'spring', damping: 25, stiffness: 250 }
       });
+      
+      // Reset menu state
       setMenuOpen(false);
       document.body.style.overflow = 'auto';
-      await hamburgerControls.start({
+      
+      // Reset hamburger icon
+      hamburgerControls.start({
         rotate: 0,
         transition: { duration: 0.3 }
       });
     }
   };
 
-  const closeMenu = (e) => {
-    // Only prevent default if event exists (menu item click)
-    if (e) {
-      e.preventDefault();
-      setMenuOpen(false);
-      document.body.style.overflow = 'auto';
-      // Add a small delay to allow the menu to close before navigation
-      setTimeout(() => {
-        const href = e.currentTarget.getAttribute('href');
-        if (href) {
-          window.location.href = href;
-        }
-      }, 300);
-    } else {
-      // For overlay click (no event)
-      setMenuOpen(false);
-      document.body.style.overflow = 'auto';
-    }
+  const closeMenu = () => {
+    // Close the menu
+    setMenuOpen(false);
+    document.body.style.overflow = 'auto';
+    
+    // Animate the menu out
+    menuControls.start({
+      x: '100%',
+      transition: { type: 'tween', duration: 0.2, ease: 'easeInOut' }
+    });
+  };
+  
+  const handleNavigation = (e, path) => {
+    e.preventDefault();
+    closeMenu();
+    // Use a small timeout to ensure the menu closes before navigation
+    setTimeout(() => {
+      window.location.href = path;
+    }, 50);
   };
 
   return (
@@ -394,6 +397,7 @@ const Header = ({ currentTheme = 'light', toggleTheme = () => {} }) => {
           aria-expanded={menuOpen}
           initial={false}
           animate={hamburgerControls}
+          type="button"
         >
           <HamburgerLine
             animate={menuOpen ? { rotate: 45, y: 8, background: 'currentColor' } : { rotate: 0, y: 0 }}
@@ -423,7 +427,7 @@ const Header = ({ currentTheme = 'light', toggleTheme = () => {} }) => {
               initial={{ x: "100%" }}
               animate={menuControls}
               exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+              transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
             >
               <CloseButton 
                 onClick={closeMenu} 
@@ -438,48 +442,44 @@ const Header = ({ currentTheme = 'light', toggleTheme = () => {} }) => {
               <MobileNavList>
                 <MobileNavItem>
                   <MobileNavLink 
-                    to="/" 
-                    onClick={(e) => closeMenu(e)}
+                    as={motion.div}
                     $isActive={location.pathname === "/"}
-                    as={motion.a}
                     whileHover={{ x: 10 }}
                     whileTap={{ scale: 0.97 }}
+                    onClick={(e) => handleNavigation(e, '/')}
                   >
                     <FaHome size={18} /> Home
                   </MobileNavLink>
                 </MobileNavItem>
                 <MobileNavItem>
                   <MobileNavLink 
-                    to="/about" 
-                    onClick={(e) => closeMenu(e)}
+                    as={motion.div}
                     $isActive={location.pathname === "/about"}
-                    as={motion.a}
                     whileHover={{ x: 10 }}
                     whileTap={{ scale: 0.97 }}
+                    onClick={(e) => handleNavigation(e, '/about')}
                   >
                     <FaUser size={18} /> About
                   </MobileNavLink>
                 </MobileNavItem>
                 <MobileNavItem>
                   <MobileNavLink 
-                    to="/projects" 
-                    onClick={(e) => closeMenu(e)}
+                    as={motion.div}
                     $isActive={location.pathname === "/projects"}
-                    as={motion.a}
                     whileHover={{ x: 10 }}
                     whileTap={{ scale: 0.97 }}
+                    onClick={(e) => handleNavigation(e, '/projects')}
                   >
                     <FaProjectDiagram size={18} /> Projects
                   </MobileNavLink>
                 </MobileNavItem>
                 <MobileNavItem>
                   <MobileNavLink 
-                    to="/contact" 
-                    onClick={(e) => closeMenu(e)}
+                    as={motion.div}
                     $isActive={location.pathname === "/contact"}
-                    as={motion.a}
                     whileHover={{ x: 10 }}
                     whileTap={{ scale: 0.97 }}
+                    onClick={(e) => handleNavigation(e, '/contact')}
                   >
                     <FaEnvelope size={18} /> Contact
                   </MobileNavLink>

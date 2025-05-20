@@ -4,9 +4,8 @@ import { Link } from "react-router-dom";
 import { motion, useTransform, useMotionValue, useSpring } from "framer-motion";
 import { TypeAnimation } from "react-type-animation";
 import { Helmet } from "react-helmet-async";
-import { useLazyLoad, useAnimationFrameLoop } from "../utils/optimizations";
 import { useTheme } from "styled-components";
-import { FiArrowDown, FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
+import { FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
 import profileImg from "../assets/Artur_profile_photo.png";
 
 // Styled components
@@ -401,22 +400,7 @@ const SocialButton = styled(motion.a)`
   }
 `;
 
-const ScrollIndicator = styled(motion.div)`
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: ${({ theme }) =>
-    theme && theme.colors ? theme.colors.textSecondary : "#555555"};
-  font-size: 0.9rem;
 
-  span {
-    margin-bottom: 0.5rem;
-  }
-`;
 
 const Home = () => {
   const theme = useTheme();
