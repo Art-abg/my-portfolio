@@ -24,20 +24,20 @@ const HeroSection = styled.section`
   justify-content: center;
   padding: 1rem;
   overflow: hidden;
-  
+
   @media (max-width: 768px) {
-    padding: 0.5rem;
+    padding: 0.3rem;
     align-items: flex-start;
-    padding-top: 5rem;
+    padding-top: 1rem;
   }
 `;
 
 const NeumorphicCard = styled(motion.div)`
   background: ${({ theme }) => theme?.colors?.cardBackground || "#e0e5ec"};
   border-radius: 24px;
-  box-shadow: ${({ theme }) => 
-    theme?.shadows?.card || 
-    '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'};
+  box-shadow: ${({ theme }) =>
+    theme?.shadows?.card ||
+    "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"};
   padding: 2.5rem;
   max-width: 1200px;
   width: 100%;
@@ -49,7 +49,8 @@ const NeumorphicCard = styled(motion.div)`
   margin: 0 auto;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid ${({ theme }) => theme?.colors?.border || 'rgba(255, 255, 255, 0.2)'};
+  border: 1px solid
+    ${({ theme }) => theme?.colors?.border || "rgba(255, 255, 255, 0.2)"};
 
   @media (max-width: 992px) {
     grid-template-columns: 1fr;
@@ -66,7 +67,7 @@ const NeumorphicCard = styled(motion.div)`
     max-width: 100%;
     border-radius: 16px;
   }
-  
+
   @media (max-width: 480px) {
     padding: 1.25rem;
     border-radius: 14px;
@@ -97,7 +98,7 @@ const ImageSection = styled(motion.div)`
     order: 1;
     margin-bottom: 1rem;
   }
-  
+
   @media (max-width: 480px) {
     padding: 0 0.5rem;
   }
@@ -110,16 +111,18 @@ const NeumorphicImageContainer = styled(motion.div)`
   border-radius: 16px;
   position: relative;
   overflow: hidden;
-  box-shadow: ${({ theme }) => theme?.shadows?.card || '0 4px 6px rgba(0, 0, 0, 0.1)'};
+  box-shadow: ${({ theme }) =>
+    theme?.shadows?.card || "0 4px 6px rgba(0, 0, 0, 0.1)"};
   max-width: 400px;
   margin: 0 auto;
-  border: 1px solid ${({ theme }) => theme?.colors?.border || 'rgba(255, 255, 255, 0.2)'};
+  border: 1px solid
+    ${({ theme }) => theme?.colors?.border || "rgba(255, 255, 255, 0.2)"};
 
   @media (max-width: 992px) {
     max-width: 350px;
     aspect-ratio: 1/1.15;
   }
-  
+
   @media (max-width: 480px) {
     aspect-ratio: 1/1.1;
     border-radius: 14px;
@@ -226,7 +229,7 @@ const Name = styled(motion.h1)`
     margin-bottom: 0.75rem;
     text-align: center;
   }
-  
+
   @media (max-width: 480px) {
     font-size: 1.75rem;
     margin-bottom: 0.5rem;
@@ -247,7 +250,7 @@ const Subtitle = styled(motion.div)`
     margin-bottom: 1.5rem;
     text-align: center;
   }
-  
+
   @media (max-width: 480px) {
     font-size: 1.1rem;
     margin-bottom: 1.25rem;
@@ -269,7 +272,7 @@ const Description = styled(motion.p)`
     text-align: center;
     padding: 0 0.5rem;
   }
-  
+
   @media (max-width: 480px) {
     font-size: 0.95rem;
     line-height: 1.5;
@@ -293,7 +296,7 @@ const ButtonContainer = styled(motion.div)`
 
 const NeumorphicButton = styled(motion.button).withConfig({
   shouldForwardProp: (prop) =>
-    !["$primary", "primary", "to", "href"].includes(prop),
+    !["$primary", "primary", "to", "href"].includes(prop)
 })`
   background: ${({ theme, $primary }) => {
     if (!theme || !theme.colors) return $primary ? "#4277FF" : "#e0e5ec";
@@ -413,7 +416,7 @@ const SocialContainer = styled(motion.div)`
   gap: 1rem;
   margin-top: 2rem;
   justify-content: center;
-  
+
   @media (max-width: 768px) {
     margin-top: 1.5rem;
     padding: 0 0.5rem;
@@ -431,9 +434,9 @@ const SocialButton = styled(motion.a)`
     theme && theme.colors ? theme.colors.cardBackground : "#e0e5ec"};
   color: ${({ theme }) =>
     theme && theme.colors ? theme.colors.text : "#333333"};
-  box-shadow: ${({ theme }) => theme?.shadows?.card || '0 2px 4px rgba(0,0,0,0.1)'};
-  transition: ${({ theme }) =>
-    theme?.transitions?.default || "all 0.3s ease"};
+  box-shadow: ${({ theme }) =>
+    theme?.shadows?.card || "0 2px 4px rgba(0,0,0,0.1)"};
+  transition: ${({ theme }) => theme?.transitions?.default || "all 0.3s ease"};
   cursor: pointer;
   font-size: 1.1rem;
   will-change: transform;
@@ -441,22 +444,22 @@ const SocialButton = styled(motion.a)`
   &:hover {
     transform: translateY(-3px);
     color: ${({ theme }) => theme?.colors?.primary || "#4277FF"};
-    box-shadow: ${({ theme }) => theme?.shadows?.cardHover || '0 4px 8px rgba(0,0,0,0.15)'};
+    box-shadow: ${({ theme }) =>
+      theme?.shadows?.cardHover || "0 4px 8px rgba(0,0,0,0.15)"};
   }
 
   &:active {
     transform: translateY(0);
-    box-shadow: ${({ theme }) => theme?.shadows?.card || '0 2px 4px rgba(0,0,0,0.1)'};
+    box-shadow: ${({ theme }) =>
+      theme?.shadows?.card || "0 2px 4px rgba(0,0,0,0.1)"};
   }
-  
+
   @media (max-width: 480px) {
     width: 40px;
     height: 40px;
     font-size: 1rem;
   }
 `;
-
-
 
 const Home = () => {
   const theme = useTheme();
@@ -500,9 +503,9 @@ const Home = () => {
       opacity: 1,
       transition: {
         staggerChildren: 0.1,
-        delayChildren: 0.3,
-      },
-    },
+        delayChildren: 0.3
+      }
+    }
   };
 
   const itemVariants = {
@@ -512,9 +515,9 @@ const Home = () => {
       y: 0,
       transition: {
         type: "spring",
-        stiffness: 100,
-      },
-    },
+        stiffness: 100
+      }
+    }
   };
 
   const imageVariants = {
@@ -525,9 +528,9 @@ const Home = () => {
       transition: {
         type: "spring",
         stiffness: 100,
-        delay: 0.4,
-      },
-    },
+        delay: 0.4
+      }
+    }
   };
 
   const shapes = [
@@ -536,7 +539,7 @@ const Home = () => {
       x: "10%",
       y: "20%",
       duration: 20,
-      color: theme.colors.primary,
+      color: theme.colors.primary
     },
     { size: 80, x: "70%", y: "70%", duration: 25, color: theme.colors.accent },
     {
@@ -544,22 +547,22 @@ const Home = () => {
       x: "80%",
       y: "15%",
       duration: 30,
-      color: theme.colors.primaryLight,
+      color: theme.colors.primaryLight
     },
     {
       size: 60,
       x: "30%",
       y: "80%",
       duration: 22,
-      color: theme.colors.accentLight,
+      color: theme.colors.accentLight
     },
     {
       size: 100,
       x: "90%",
       y: "50%",
       duration: 28,
-      color: theme.colors.primary,
-    },
+      color: theme.colors.primary
+    }
   ];
 
   return (
@@ -582,17 +585,17 @@ const Home = () => {
                 width: shape.size,
                 height: shape.size,
                 left: shape.x,
-                top: shape.y,
+                top: shape.y
               }}
               animate={{
                 x: [20, -20, 20],
                 y: [10, -10, 10],
-                rotate: [0, 360],
+                rotate: [0, 360]
               }}
               transition={{
                 duration: shape.duration,
                 repeat: Infinity,
-                ease: "linear",
+                ease: "linear"
               }}
             />
           ))}
@@ -607,7 +610,7 @@ const Home = () => {
                 ? {
                     rotateX: springRotateX,
                     rotateY: springRotateY,
-                    perspective: 1000,
+                    perspective: 1000
                   }
                 : {}
             }
@@ -626,7 +629,7 @@ const Home = () => {
                     "UX/UI Designer",
                     2000,
                     "Creative Problem Solver",
-                    2000,
+                    2000
                   ]}
                   wrapper="span"
                   speed={50}
@@ -653,7 +656,7 @@ const Home = () => {
                     whileHover={{
                       y: -2,
                       scale: 1.02,
-                      transition: { duration: 0.2 },
+                      transition: { duration: 0.2 }
                     }}
                   >
                     View My Work
@@ -670,7 +673,7 @@ const Home = () => {
                     whileHover={{
                       y: -2,
                       scale: 1.02,
-                      transition: { duration: 0.2 },
+                      transition: { duration: 0.2 }
                     }}
                   >
                     Contact Me
@@ -713,13 +716,13 @@ const Home = () => {
                   boxShadow: [
                     "1px 1px 3px rgba(0,0,0,0.1)" /* TEMP DEBUG */,
                     "2px 2px 4px rgba(0,0,0,0.15)" /* TEMP DEBUG */,
-                    "1px 1px 3px rgba(0,0,0,0.1)" /* TEMP DEBUG */,
-                  ],
+                    "1px 1px 3px rgba(0,0,0,0.1)" /* TEMP DEBUG */
+                  ]
                 }}
                 transition={{
                   repeat: Infinity,
                   duration: 5,
-                  ease: "easeInOut",
+                  ease: "easeInOut"
                 }}
               >
                 <ProfileImage
@@ -729,7 +732,7 @@ const Home = () => {
                   transition={{
                     duration: 4,
                     repeat: Infinity,
-                    repeatType: "reverse",
+                    repeatType: "reverse"
                   }}
                 />
               </NeumorphicImageContainer>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
-import { motion, AnimatePresence, useAnimation } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { FaTimes, FaHome, FaUser, FaProjectDiagram, FaEnvelope } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import ToggleSwitch from "./common/ToggleSwitch";
@@ -120,10 +120,12 @@ const ThemeToggleWrapper = styled.div`
 `;
 
 const Hamburger = styled(motion.button)`
-  background: none;
-  border: none;
+  background: ${({ theme }) => theme.colors.glassMorphism};
+  border: ${({ theme }) => theme.colors.glassBorder};
   cursor: pointer;
-  padding: 0.5rem;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
   margin-left: 1rem;
   display: flex;
   flex-direction: column;
@@ -133,6 +135,20 @@ const Hamburger = styled(motion.button)`
   position: relative;
   outline: none;
   -webkit-tap-highlight-color: transparent;
+  box-shadow: ${({ theme }) => theme.shadows.cardLight};
+  transition: ${({ theme }) => theme.transitions.default};
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  
+  &:hover {
+    box-shadow: ${({ theme }) => theme.shadows.cardHover};
+    transform: translateY(-2px);
+  }
+  
+  &:active {
+    box-shadow: ${({ theme }) => theme.colors.neumorphicInset};
+    transform: translateY(1px);
+  }
   
   @media (min-width: 769px) {
     display: none;
@@ -141,12 +157,13 @@ const Hamburger = styled(motion.button)`
 
 const HamburgerLine = styled(motion.span)`
   display: block;
-  width: 20px;
+  width: 18px;
   height: 2px;
   background: ${({ theme }) => theme.colors.text};
-  border-radius: 2px;
-  margin: 3px 0;
+  border-radius: 4px;
+  margin: 2px 0;
   transform-origin: center;
+  transition: ${({ theme }) => theme.transitions.default};
 `;
 
 const MobileMenu = styled(motion.div)`
@@ -156,54 +173,64 @@ const MobileMenu = styled(motion.div)`
   width: 80%;
   max-width: 300px;
   height: 100vh;
-  background: ${({ theme }) => theme.colors.background || 'rgba(255, 255, 255, 0.95)'};
+  background: ${({ theme }) => theme.colors.background};
   display: flex;
   flex-direction: column;
-  padding: 2.5rem;
+  padding: 5rem 2rem 2rem;
   z-index: 1000;
-  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+  box-shadow: ${({ theme }) => theme.shadows.mobileMenu};
   overflow-y: auto;
   will-change: transform;
   pointer-events: auto;
-  
-  @media (prefers-color-scheme: dark) {
-    background: ${({ theme }) => theme.colors.background || 'rgba(26, 32, 44, 0.97)'};
-  }
+  border-left: ${({ theme }) => theme.colors.glassBorder};
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 `;
 
 const MobileNavList = styled.ul`
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  margin-top: 3rem;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  width: 100%;
 `;
 
 const MobileNavItem = styled.li``;
 
-const MobileNavLink = styled(Link)`
+const MobileNavLink = styled(motion.div)`
   color: ${({ theme, $isActive }) => $isActive ? theme.colors.primary : theme.colors.headerText};
   text-decoration: none;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
+  font-weight: ${({ $isActive }) => $isActive ? '600' : '500'};
   transition: ${({ theme }) => theme.transitions.default};
   font-family: ${({ theme }) => theme.fonts.body};
-  padding: 0.8rem 1.2rem;
-  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   gap: 1rem;
   background-color: ${({ theme, $isActive }) => $isActive ? `${theme.colors.primary}15` : 'transparent'};
   box-shadow: ${({ theme, $isActive }) => $isActive ? theme.colors.neumorphicInset : 'none'};
   width: 100%;
+  cursor: pointer;
+  
+  svg {
+    color: ${({ theme, $isActive }) => $isActive ? theme.colors.primary : theme.colors.textSecondary};
+    transition: ${({ theme }) => theme.transitions.default};
+  }
   
   &:hover {
     color: ${({ theme }) => theme.colors.primary};
-    box-shadow: ${({ theme }) => theme.shadows.card};
-    transform: translateY(-2px);
+    background-color: ${({ theme }) => `${theme.colors.primary}10`};
+    
+    svg {
+      color: ${({ theme }) => theme.colors.primary};
+    }
   }
 `;
 
-const CloseButton = styled.button`
+const CloseButton = styled(motion.button)`
   background: ${({ theme }) => theme.colors.glassMorphism};
   border: ${({ theme }) => theme.colors.glassBorder};
   color: ${({ theme }) => theme.colors.headerText};
@@ -215,43 +242,17 @@ const CloseButton = styled.button`
   justify-content: center;
   cursor: pointer;
   font-size: 1.2rem;
-  align-self: flex-end;
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
   box-shadow: ${({ theme }) => theme.shadows.cardLight};
   transition: ${({ theme }) => theme.transitions.default};
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
-  position: relative;
-  overflow: hidden;
-  margin-bottom: 1.5rem;
+  z-index: 2;
   
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: ${({ theme }) => theme.colors.gradientAccent};
-    opacity: 0;
-    border-radius: 50%;
-    transform: scale(0);
-    transition: ${({ theme }) => theme.transitions.default};
-  }
-
   &:hover {
-    box-shadow: ${({ theme }) => theme.shadows.cardHover};
     color: ${({ theme }) => theme.colors.error};
-    transform: translateY(-3px) rotate(90deg);
-    
-    &::before {
-      opacity: 0.1;
-      transform: scale(1);
-    }
-  }
-
-  &:active {
-    box-shadow: ${({ theme }) => theme.colors.neumorphicInset};
-    transform: translateY(1px);
   }
   
   svg {
@@ -278,8 +279,6 @@ const Header = ({ currentTheme = 'light', toggleTheme = () => {} }) => {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const menuControls = useAnimation();
-  const hamburgerControls = useAnimation();
   
   const isDark = currentTheme === 'dark';
 
@@ -297,57 +296,21 @@ const Header = ({ currentTheme = 'light', toggleTheme = () => {} }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleMenuToggle = async (e) => {
-    e.stopPropagation();
+  const handleMenuToggle = () => {
+    setMenuOpen(!menuOpen);
     
     if (!menuOpen) {
-      // Open menu
-      setMenuOpen(true);
+      // Lock body scroll when menu is open
       document.body.style.overflow = 'hidden';
-      
-      // Set initial state for animation
-      await menuControls.set({ x: '100%' });
-      
-      // Animate menu in
-      menuControls.start({
-        x: 0,
-        transition: { type: 'tween', duration: 0.3, ease: 'easeInOut' }
-      });
-      
-      // Animate hamburger icon
-      hamburgerControls.start({
-        rotate: 180,
-        transition: { duration: 0.3 }
-      });
     } else {
-      // Close menu
-      await menuControls.start({
-        x: '100%',
-        transition: { type: 'spring', damping: 25, stiffness: 250 }
-      });
-      
-      // Reset menu state
-      setMenuOpen(false);
+      // Restore body scroll when menu is closed
       document.body.style.overflow = 'auto';
-      
-      // Reset hamburger icon
-      hamburgerControls.start({
-        rotate: 0,
-        transition: { duration: 0.3 }
-      });
     }
   };
 
   const closeMenu = () => {
-    // Close the menu
     setMenuOpen(false);
     document.body.style.overflow = 'auto';
-    
-    // Animate the menu out
-    menuControls.start({
-      x: '100%',
-      transition: { type: 'tween', duration: 0.2, ease: 'easeInOut' }
-    });
   };
   
   const handleNavigation = (e, path) => {
@@ -396,21 +359,21 @@ const Header = ({ currentTheme = 'light', toggleTheme = () => {} }) => {
           onClick={handleMenuToggle} 
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={menuOpen}
-          initial={false}
-          animate={hamburgerControls}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           type="button"
         >
           <HamburgerLine
-            animate={menuOpen ? { rotate: 45, y: 8, background: 'currentColor' } : { rotate: 0, y: 0 }}
-            transition={{ duration: 0.3 }}
+            animate={menuOpen ? { rotate: 45, y: 4 } : { rotate: 0, y: 0 }}
+            transition={{ duration: 0.2 }}
           />
           <HamburgerLine
-            animate={menuOpen ? { opacity: 0 } : { opacity: 1 }}
-            transition={{ duration: 0.1 }}
+            animate={menuOpen ? { opacity: 0, width: 0 } : { opacity: 1, width: 18 }}
+            transition={{ duration: 0.2 }}
           />
           <HamburgerLine
-            animate={menuOpen ? { rotate: -45, y: -8, background: 'currentColor' } : { rotate: 0, y: 0 }}
-            transition={{ duration: 0.3 }}
+            animate={menuOpen ? { rotate: -45, y: -4 } : { rotate: 0, y: 0 }}
+            transition={{ duration: 0.2 }}
           />
         </Hamburger>
       </IconsContainer>
@@ -422,18 +385,17 @@ const Header = ({ currentTheme = 'light', toggleTheme = () => {} }) => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={closeMenu}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.2 }}
             />
             <MobileMenu
               initial={{ x: "100%" }}
-              animate={menuControls}
+              animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
             >
               <CloseButton 
                 onClick={closeMenu} 
                 aria-label="Close Menu"
-                as={motion.button}
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.95 }}
                 title="Close Menu"
@@ -443,44 +405,52 @@ const Header = ({ currentTheme = 'light', toggleTheme = () => {} }) => {
               <MobileNavList>
                 <MobileNavItem>
                   <MobileNavLink 
-                    as={motion.div}
                     $isActive={location.pathname === "/"}
-                    whileHover={{ x: 10 }}
-                    whileTap={{ scale: 0.97 }}
                     onClick={(e) => handleNavigation(e, '/')}
+                    whileHover={{ x: 5 }}
+                    whileTap={{ scale: 0.98 }}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 }}
                   >
                     <FaHome size={18} /> Home
                   </MobileNavLink>
                 </MobileNavItem>
                 <MobileNavItem>
                   <MobileNavLink 
-                    as={motion.div}
                     $isActive={location.pathname === "/about"}
-                    whileHover={{ x: 10 }}
-                    whileTap={{ scale: 0.97 }}
                     onClick={(e) => handleNavigation(e, '/about')}
+                    whileHover={{ x: 5 }}
+                    whileTap={{ scale: 0.98 }}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.2 }}
                   >
                     <FaUser size={18} /> About
                   </MobileNavLink>
                 </MobileNavItem>
                 <MobileNavItem>
                   <MobileNavLink 
-                    as={motion.div}
                     $isActive={location.pathname === "/projects"}
-                    whileHover={{ x: 10 }}
-                    whileTap={{ scale: 0.97 }}
                     onClick={(e) => handleNavigation(e, '/projects')}
+                    whileHover={{ x: 5 }}
+                    whileTap={{ scale: 0.98 }}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3 }}
                   >
                     <FaProjectDiagram size={18} /> Projects
                   </MobileNavLink>
                 </MobileNavItem>
                 <MobileNavItem>
                   <MobileNavLink 
-                    as={motion.div}
                     $isActive={location.pathname === "/contact"}
-                    whileHover={{ x: 10 }}
-                    whileTap={{ scale: 0.97 }}
                     onClick={(e) => handleNavigation(e, '/contact')}
+                    whileHover={{ x: 5 }}
+                    whileTap={{ scale: 0.98 }}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 }}
                   >
                     <FaEnvelope size={18} /> Contact
                   </MobileNavLink>
