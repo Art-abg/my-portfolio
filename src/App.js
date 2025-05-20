@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, lazy, Suspense } from "react";
 import { ThemeProvider } from "styled-components";
-import Home from "./pages/Home";
 import {
   BrowserRouter as Router,
   Routes,
@@ -11,13 +10,27 @@ import { AnimatePresence } from "framer-motion";
 import { Helmet } from "react-helmet";
 import styled from "styled-components";
 
+// Styles and Themes
 import GlobalStyles from "./styles/globalStyles";
 import { lightTheme, darkTheme } from "./styles/theme";
+
+// Components
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import About from "./pages/About";
-import Projects from "./pages/Projects";
-import Contact from "./pages/Contact";
+import LoadingSpinner from "./components/common/LoadingSpinner";
+
+// Lazy load pages with prefetching
+const lazyWithPrefetch = (importFunction) => {
+  const Component = lazy(importFunction);
+  Component.prefetch = importFunction;
+  return Component;
+};
+
+// Lazy-loaded page components
+const Home = lazyWithPrefetch(() => import("./pages/Home"));
+const About = lazyWithPrefetch(() => import("./pages/About"));
+const Projects = lazyWithPrefetch(() => import("./pages/Projects"));
+const Contact = lazyWithPrefetch(() => import("./pages/Contact"));
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -68,18 +81,54 @@ const PageContainer = styled.div`
 const AnimatedRoutes = () => {
   const location = useLocation();
 
+  // Prefetch routes when hovering over navigation
+  const prefetchRoute = (component) => {
+    if (component.prefetch) {
+      component.prefetch().catch(() => {});
+    }
+  };
+
   return (
     <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/projects" element={
-          <ErrorBoundary>
-            <Projects />
-          </ErrorBoundary>
-        } />
-        <Route path="/contact" element={<Contact />} />
-      </Routes>
+      <Suspense fallback={<LoadingSpinner fullPage />}>
+        <Routes location={location} key={location.pathname}>
+          <Route 
+            path="/" 
+            element={
+              <ErrorBoundary>
+                <Home />
+              </ErrorBoundary>
+            } 
+          />
+          <Route 
+            path="/about" 
+            element={
+              <ErrorBoundary>
+                <About />
+              </ErrorBoundary>
+            } 
+            onMouseEnter={() => prefetchRoute(About)}
+          />
+          <Route 
+            path="/projects" 
+            element={
+              <ErrorBoundary>
+                <Projects />
+              </ErrorBoundary>
+            } 
+            onMouseEnter={() => prefetchRoute(Projects)}
+          />
+          <Route 
+            path="/contact" 
+            element={
+              <ErrorBoundary>
+                <Contact />
+              </ErrorBoundary>
+            } 
+            onMouseEnter={() => prefetchRoute(Contact)}
+          />
+        </Routes>
+      </Suspense>
     </AnimatePresence>
   );
 };
