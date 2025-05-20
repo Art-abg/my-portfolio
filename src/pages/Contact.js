@@ -1,122 +1,191 @@
-import React, { useState, useRef } from "react";
-import styled from "styled-components";
-import { motion, useInView, useAnimation } from "framer-motion";
-import emailjs from "emailjs-com";
-import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaLinkedin, FaGithub, FaPaperPlane } from "react-icons/fa";
-import ReCAPTCHA from "react-google-recaptcha";
+import React, { useState, useRef, useEffect } from 'react';
+import styled, { keyframes } from 'styled-components';
+import { motion, useAnimation, useInView } from 'framer-motion';
+import emailjs from '@emailjs/browser';
+import ReCAPTCHA from 'react-google-recaptcha';
+import { 
+  FaEnvelope, 
+  FaPhone, 
+  FaMapMarkerAlt, 
+  FaPaperPlane,
+  FaLinkedin, 
+  FaGithub,
+  FaCheckCircle,
+  FaExclamationCircle
+} from 'react-icons/fa'; // Added missing icons
 
+// Animations
+const float = keyframes`
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0px); }
+`;
+
+const fadeIn = keyframes`
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
+// Styled Components
 const ContactSection = styled.section`
-  padding: 6rem 2rem;
-  background-color: ${({ theme }) => theme.colors.background};
-  color: ${({ theme }) => theme.colors.text};
   min-height: 100vh;
+  padding: 6rem 2rem;
+  background: ${({ theme }) => theme.colors.background};
   position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   
   &::before {
     content: '';
     position: absolute;
-    top: -30%;
-    left: -20%;
-    width: 60%;
-    height: 60%;
-    background: radial-gradient(circle, ${({ theme }) => theme.colors.primary}10, transparent 70%);
-    opacity: 0.3;
+    top: -20%;
+    left: -10%;
+    width: 50%;
+    height: 50%;
+    background: radial-gradient(circle, ${({ theme }) => theme.colors.primary}05, transparent 60%);
     z-index: 0;
-    animation: pulse 15s ease-in-out infinite alternate;
+    animation: ${float} 8s ease-in-out infinite;
   }
   
   &::after {
     content: '';
     position: absolute;
-    bottom: -30%;
-    right: -20%;
-    width: 60%;
-    height: 60%;
-    background: radial-gradient(circle, ${({ theme }) => theme.colors.accent}10, transparent 70%);
-    opacity: 0.3;
+    bottom: -20%;
+    right: -10%;
+    width: 50%;
+    height: 50%;
+    background: radial-gradient(circle, ${({ theme }) => theme.colors.accent}05, transparent 60%);
     z-index: 0;
-    animation: pulse 15s ease-in-out 5s infinite alternate;
+    animation: ${float} 10s ease-in-out infinite reverse;
   }
   
-  @keyframes pulse {
-    0% {
-      transform: scale(1);
-      opacity: 0.3;
-    }
-    50% {
-      transform: scale(1.05);
-      opacity: 0.4;
-    }
-    100% {
-      transform: scale(1);
-      opacity: 0.3;
-    }
+  @media (max-width: 768px) {
+    padding: 4rem 1rem;
   }
 `;
 
 const ContactContainer = styled.div`
   max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.2fr 1fr;
   gap: 4rem;
   position: relative;
   z-index: 1;
-
-  @media (max-width: 768px) {
+  background: ${({ theme }) => theme.colors.background};
+  border-radius: 24px;
+  box-shadow: ${({ theme }) => theme.shadows.neumorphicLight};
+  overflow: hidden;
+  
+  @media (max-width: 1024px) {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    max-width: 700px;
+  }
+  
+  @media (max-width: 768px) {
+    gap: 2.5rem;
+    border-radius: 20px;
   }
 `;
 
 const ContactInfo = styled.div`
-  padding: 2rem;
+  padding: 4rem 3rem;
   position: relative;
-`;
-
-const InfoTitle = styled(motion.h3)`
-  font-size: 2.5rem;
-  margin-bottom: 2.5rem;
-  font-family: ${({ theme }) => theme.fonts.headings};
-  background: linear-gradient(90deg, ${({ theme }) => theme.colors.primary}, ${({ theme }) => theme.colors.accent});
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  display: inline-block;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: ${({ theme }) => theme.colors.background};
   
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 0;
-    width: 60px;
-    height: 4px;
-    background: linear-gradient(90deg, ${({ theme }) => theme.colors.primary}, ${({ theme }) => theme.colors.accent});
-    border-radius: 2px;
+  @media (max-width: 1024px) {
+    padding: 3rem 2rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 2.5rem 1.5rem;
   }
 `;
 
-const InfoItem = styled(motion.div)`
+const SectionTitle = styled(motion.h1)`
+  font-size: 2.75rem;
+  font-weight: 800;
+  font-family: ${({ theme }) => theme.fonts.headings};
+  color: ${({ theme }) => theme.colors.text};
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+  position: relative;
+  display: inline-block;
+  
+  span {
+    color: ${({ theme }) => theme.colors.primary};
+    position: relative;
+    display: inline-block;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 5px;
+      left: 0;
+      width: 100%;
+      height: 8px;
+      background: ${({ theme }) => `${theme.colors.primary}30`};
+      z-index: -1;
+      border-radius: 4px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 2.25rem;
+  }
+`;
+
+const SectionSubtitle = styled.p`
+  font-size: 1.1rem;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  margin-bottom: 3rem;
+  line-height: 1.6;
+  max-width: 90%;
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    max-width: 100%;
+  }
+`;
+
+const ContactInfoGrid = styled.div`
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 2rem;
+`;
+
+const InfoItem = styled(motion.a)`
   display: flex;
   align-items: center;
-  margin-bottom: 2rem;
   padding: 1.5rem;
-  background-color: ${({ theme }) => theme.colors.background};
+  background: ${({ theme }) => theme.colors.cardBackground};
   border-radius: 16px;
-  box-shadow: ${({ theme }) => theme.shadows.card};
-  transition: ${({ theme }) => theme.transitions.default};
-
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: ${({ theme }) => theme.shadows.neumorphicLight};
+  border: 1px solid ${({ theme }) => `${theme.colors.primary}10`};
+  
   &:hover {
-    transform: translateX(8px) translateY(-5px);
-    box-shadow: ${({ theme }) => theme.shadows.cardHover};
+    transform: translateY(-3px);
+    box-shadow: ${({ theme }) => theme.shadows.neumorphicLightHover};
+    border-color: ${({ theme }) => `${theme.colors.primary}20`};
+  }
+  
+  @media (max-width: 480px) {
+    padding: 1.25rem;
   }
 `;
 
 const InfoIcon = styled.div`
-  font-size: 1.5rem;
   width: 50px;
   height: 50px;
+  min-width: 50px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -124,65 +193,109 @@ const InfoIcon = styled.div`
   background: ${({ theme }) => theme.colors.background};
   color: ${({ theme }) => theme.colors.primary};
   margin-right: 1.5rem;
-  box-shadow: ${({ theme }) => theme.colors.neumorphicInset};
+  font-size: 1.25rem;
+  box-shadow: ${({ theme }) => theme.shadows.neumorphicLight};
+  transition: all 0.3s ease;
+  
+  ${InfoItem}:hover & {
+    color: ${({ theme }) => theme.colors.accent};
+    transform: scale(1.05);
+  }
+  
+  @media (max-width: 480px) {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    margin-right: 1rem;
+    font-size: 1.1rem;
+  }
 `;
 
 const InfoText = styled.div`
   h4 {
-    margin: 0;
+    margin: 0 0 0.25rem;
     font-size: 1.1rem;
+    font-weight: 600;
     color: ${({ theme }) => theme.colors.text};
+    transition: color 0.3s ease;
   }
 
   p {
-    margin: 0.5rem 0 0;
+    margin: 0;
+    font-size: 0.95rem;
     color: ${({ theme }) => theme.colors.textSecondary};
+    transition: color 0.3s ease;
+  }
+  
+  ${InfoItem}:hover & h4 {
+    color: ${({ theme }) => theme.colors.primary};
+  }
+  
+  @media (max-width: 480px) {
+    h4 {
+      font-size: 1rem;
+    }
+    
+    p {
+      font-size: 0.9rem;
+    }
   }
 `;
 
 const FormContainer = styled(motion.div)`
-  background-color: ${({ theme }) => theme.colors.background};
-  padding: 2.5rem;
-  border-radius: 20px;
-  box-shadow: ${({ theme }) => theme.shadows.card};
-  transition: ${({ theme }) => theme.transitions.default};
-  transform-origin: center;
+  padding: 4rem 3rem;
+  background: ${({ theme }) => theme.colors.background};
   position: relative;
-  border: 1px solid transparent;
+  overflow: hidden;
   
-  &:hover {
-    border-color: ${({ theme }) => `${theme.colors.primary}15`};
-  }
-  
-  &::after {
+  &::before {
     content: '';
     position: absolute;
-    top: -10px;
-    right: -10px;
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, ${({ theme }) => theme.colors.primary}20, ${({ theme }) => theme.colors.accent}20);
-    z-index: -1;
-    filter: blur(15px);
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: linear-gradient(90deg, 
+      ${({ theme }) => theme.colors.primary}, 
+      ${({ theme }) => theme.colors.accent}
+    );
+  }
+  
+  @media (max-width: 1024px) {
+    padding: 3rem 2rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 2.5rem 1.5rem;
   }
 `;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.75rem;
+  
+  @media (max-width: 480px) {
+    gap: 1.5rem;
+  }
 `;
 
 const FormGroup = styled.div`
   position: relative;
+  margin-bottom: 0.5rem;
 `;
 
 const Label = styled.label`
   display: block;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   margin-bottom: 0.5rem;
+  font-weight: 500;
   color: ${({ theme }) => theme.colors.text};
+  transition: color 0.3s ease;
+  
+  ${({ $hasError }) => $hasError && `
+    color: #ff4d4f;
+  `}
 `;
 
 const Input = styled.input`
@@ -190,14 +303,30 @@ const Input = styled.input`
   padding: 1rem 1.5rem;
   border: none;
   border-radius: 12px;
-  background-color: ${({ theme }) => theme.colors.background};
+  background: ${({ theme }) => theme.colors.background};
   color: ${({ theme }) => theme.colors.text};
   font-size: 1rem;
-  box-shadow: ${({ theme, error }) => 
-    error ? 
-    `inset 4px 4px 8px rgba(255, 77, 77, 0.2), inset -4px -4px 8px rgba(255, 255, 255, 0.05), 0 0 0 2px ${theme.colors.accent}` : 
-    theme.colors.neumorphicInset
+  font-family: ${({ theme }) => theme.fonts.body};
+  box-shadow: ${({ theme, $hasError }) => 
+    $hasError 
+      ? `inset 4px 4px 8px rgba(255, 77, 77, 0.2), inset -4px -4px 8px rgba(255, 255, 255, 0.05), 0 0 0 2px #ff4d4f` 
+      : theme.shadows.neumorphicLight
   };
+  transition: all 0.3s ease;
+  -webkit-appearance: none;
+  
+  &::placeholder {
+    color: ${({ theme }) => theme.colors.textSecondary}80;
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: ${({ theme, $hasError }) => 
+      $hasError 
+        ? `inset 4px 4px 8px rgba(255, 77, 77, 0.2), inset -4px -4px 8px rgba(255, 255, 255, 0.05), 0 0 0 2px #ff4d4f`
+        : `inset 4px 4px 8px rgba(0, 0, 0, 0.1), inset -4px -4px 8px rgba(255, 255, 255, 0.2), 0 0 0 2px ${theme.colors.primary}80`
+    };
+  }
   transition: ${({ theme }) => theme.transitions.default};
   position: relative;
   z-index: 1;
@@ -223,16 +352,33 @@ const TextArea = styled.textarea`
   padding: 1rem 1.5rem;
   border: none;
   border-radius: 12px;
-  background-color: ${({ theme }) => theme.colors.background};
+  background: ${({ theme }) => theme.colors.background};
   color: ${({ theme }) => theme.colors.text};
   font-size: 1rem;
-  resize: vertical;
+  font-family: ${({ theme }) => theme.fonts.body};
   min-height: 150px;
-  box-shadow: ${({ theme, error }) => 
-    error ? 
-    `inset 4px 4px 8px rgba(255, 77, 77, 0.2), inset -4px -4px 8px rgba(255, 255, 255, 0.05), 0 0 0 2px ${theme.colors.accent}` : 
-    theme.colors.neumorphicInset
+  resize: vertical;
+  box-shadow: ${({ theme, $hasError }) => 
+    $hasError 
+      ? `inset 4px 4px 8px rgba(255, 77, 77, 0.2), inset -4px -4px 8px rgba(255, 255, 255, 0.05), 0 0 0 2px #ff4d4f` 
+      : theme.shadows.neumorphicLight
   };
+  transition: all 0.3s ease;
+  -webkit-appearance: none;
+  line-height: 1.6;
+  
+  &::placeholder {
+    color: ${({ theme }) => theme.colors.textSecondary}80;
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: ${({ theme, $hasError }) => 
+      $hasError 
+        ? `inset 4px 4px 8px rgba(255, 77, 77, 0.2), inset -4px -4px 8px rgba(255, 255, 255, 0.05), 0 0 0 2px #ff4d4f`
+        : `inset 4px 4px 8px rgba(0, 0, 0, 0.1), inset -4px -4px 8px rgba(255, 255, 255, 0.2), 0 0 0 2px ${theme.colors.primary}80`
+    };
+  }
   transition: ${({ theme }) => theme.transitions.default};
   position: relative;
   z-index: 1;
@@ -242,22 +388,71 @@ const TextArea = styled.textarea`
     box-shadow: ${({ theme }) => theme.shadows.card};
     transform: translateY(-2px);
   }
-  
-  &:hover {
-    box-shadow: ${({ theme, error }) => 
-      error ? 
-      `inset 4px 4px 8px rgba(255, 77, 77, 0.2), inset -4px -4px 8px rgba(255, 255, 255, 0.05), 0 0 0 2px ${theme.colors.accent}` : 
-      `inset 3px 3px 6px rgba(0, 0, 0, 0.1), inset -3px -3px 6px rgba(255, 255, 255, 0.05)`
-    };
-    transform: translateY(-2px);
-  }
 `;
 
 const ErrorMessage = styled(motion.span)`
-  color: ${({ theme }) => theme.colors.accent};
-  font-size: 0.8rem;
+  color: #ff4d4f;
+  font-size: 0.85rem;
   margin-top: 0.5rem;
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  
+  svg {
+    font-size: 1rem;
+  }
+`;
+
+const SocialLinks = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  
+  a {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: ${({ theme }) => theme.colors.background};
+    color: ${({ theme }) => theme.colors.primary};
+    font-size: 1.25rem;
+    box-shadow: ${({ theme }) => theme.shadows.neumorphicLight};
+    transition: all 0.3s ease;
+    
+    &:hover {
+      color: white;
+      background: ${({ theme }) => theme.colors.primary};
+      transform: translateY(-3px);
+      box-shadow: ${({ theme }) => theme.shadows.neumorphicLightHover};
+    }
+    
+    @media (max-width: 480px) {
+      width: 40px;
+      height: 40px;
+      font-size: 1.1rem;
+    }
+  }
+`;
+
+const SuccessMessage = styled(motion.div)`
+  background: rgba(61, 213, 152, 0.1);
+  border: 1px solid rgba(61, 213, 152, 0.2);
+  color: #3DD598;
+  padding: 1.25rem 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 500;
+  
+  svg {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
 `;
 
 const SubmitButton = styled(motion.button)`
@@ -322,18 +517,6 @@ const SubmitButton = styled(motion.button)`
   }
 `;
 
-const SuccessMessage = styled(motion.div)`
-  text-align: center;
-  color: #4caf50;
-  padding: 1.5rem;
-  border-radius: 12px;
-  margin-top: 1.5rem;
-  background: ${({ theme }) => theme.colors.background};
-  box-shadow: ${({ theme }) => theme.colors.neumorphicInset};
-  font-weight: 600;
-`;
-
-// Animated floating cursor effect for the form
 const FloatingCursor = styled(motion.div)`
   width: 20px;
   height: 20px;
@@ -382,27 +565,53 @@ const SectionHeading = styled(motion.h2)`
   }
 `;
 
+// Add missing styled components
+const InfoTitle = styled(motion.h2)`
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.text};
+  margin-bottom: 2rem;
+  position: relative;
+  display: inline-block;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, ${({ theme }) => theme.colors.primary}, ${({ theme }) => theme.colors.accent});
+    border-radius: 2px;
+  }
+`;
+
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    subject: "",
     message: ""
   });
-
+  
   const [errors, setErrors] = useState({});
   const [sending, setSending] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [recaptchaValue, setRecaptchaValue] = useState(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   
+  const formRef = useRef();
   const contactRef = useRef(null);
+  const recaptchaRef = useRef();
   const controls = useAnimation();
   const isInView = useInView(contactRef, { once: true, amount: 0.2 });
-
-  // Start animation when contact section comes into view
-  React.useEffect(() => {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  
+  // Add reCAPTCHA site key (replace with your actual key)
+  const RECAPTCHA_SITE_KEY = process.env.REACT_APP_RECAPTCHA_SITE_KEY || '6LcXXXXXXXXXXXXXXXXXXXXX';
+  
+  useEffect(() => {
     if (isInView) {
-      controls.start("visible");
+      controls.start('visible');
     }
     
     const handleMouseMove = (e) => {
@@ -413,6 +622,21 @@ const Contact = () => {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [isInView, controls]);
   
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
+
   const validateForm = () => {
     const newErrors = {};
     if (!formData.name.trim()) newErrors.name = "Name is required";
@@ -422,50 +646,56 @@ const Contact = () => {
       newErrors.email = "Email is invalid";
     }
     if (!formData.message.trim()) newErrors.message = "Message is required";
-    if (!recaptchaValue) newErrors.recaptcha = "Please verify you're human";
+    if (!recaptchaValue) newErrors.recaptcha = "Please complete the reCAPTCHA";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value
-    }));
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: ""
-      }));
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      return;
+    }
 
     setSending(true);
+
     try {
-      // Replace with your actual EmailJS credentials
+      // Prepare the form data
+      const templateParams = {
+        from_name: formData.name,
+        from_email: formData.email,
+        subject: formData.subject || 'Message from Portfolio',
+        message: formData.message,
+        'g-recaptcha-response': recaptchaValue
+      };
+
+      // Send the email using EmailJS
       await emailjs.send(
-        "service_xxxx",
-        "template_xxxx",
-        {
-          ...formData,
-          "g-recaptcha-response": recaptchaValue
-        },
-        "user_xxxx"
+        process.env.REACT_APP_EMAILJS_SERVICE_ID || 'your_service_id',
+        process.env.REACT_APP_EMAILJS_TEMPLATE_ID || 'your_template_id',
+        templateParams,
+        process.env.REACT_APP_EMAILJS_PUBLIC_KEY || 'your_public_key'
       );
 
-      setSuccessMessage("Thank you! Your message has been sent successfully.");
-      setFormData({ name: "", email: "", message: "" });
-      setRecaptchaValue(null);
+      // Reset form state on success
+      setFormData({ name: "", email: "", subject: "", message: "" });
+      setSuccessMessage("Your message has been sent successfully! I'll get back to you soon.");
+
+      // Reset reCAPTCHA
+      if (recaptchaRef.current) {
+        recaptchaRef.current.reset();
+        setRecaptchaValue(null);
+      }
+
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 10000);
+      
     } catch (error) {
-      setErrors({ submit: "Failed to send message. Please try again." });
+      console.error('Error sending email:', error);
+      setErrors({ submit: 'Failed to send message. Please try again.' });
     } finally {
       setSending(false);
     }
@@ -640,15 +870,26 @@ const Contact = () => {
               )}
             </FormGroup>
 
-            <ReCAPTCHA
-              sitekey="6LcXXXXXXXXXXXXXXXXXXXXX" // Replace with your actual reCAPTCHA site key
-              onChange={setRecaptchaValue}
-            />
-            {errors.recaptcha && (
-              <ErrorMessage initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                {errors.recaptcha}
-              </ErrorMessage>
-            )}
+            <div style={{ margin: '1.5rem 0' }}>
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey={RECAPTCHA_SITE_KEY}
+                onChange={(value) => setRecaptchaValue(value)}
+                onExpired={() => setRecaptchaValue(null)}
+                onErrored={() => setRecaptchaValue(null)}
+                theme={document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'}
+              />
+              {errors.recaptcha && (
+                <ErrorMessage 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  style={{ marginTop: '0.5rem' }}
+                >
+                  <FaExclamationCircle /> {errors.recaptcha}
+                </ErrorMessage>
+              )}
+            </div>
+
 
             <SubmitButton
               type="submit"
@@ -660,11 +901,23 @@ const Contact = () => {
               <FaPaperPlane />
             </SubmitButton>
 
+            {errors.submit && (
+              <ErrorMessage 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                style={{ marginTop: '1rem' }}
+              >
+                <FaExclamationCircle /> {errors.submit}
+              </ErrorMessage>
+            )}
             {successMessage && (
               <SuccessMessage
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                style={{ marginTop: '1rem' }}
               >
+                <FaCheckCircle style={{ marginRight: '0.5rem' }} />
                 {successMessage}
               </SuccessMessage>
             )}

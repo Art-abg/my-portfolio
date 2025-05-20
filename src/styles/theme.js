@@ -46,7 +46,12 @@ export const lightTheme = {
     buttonPrimary: "10px 10px 20px rgba(163, 177, 198, 0.5), -10px -10px 20px rgba(255, 255, 255, 0.7)",
     buttonPrimaryHover: "14px 14px 28px rgba(163, 177, 198, 0.6), -14px -14px 28px rgba(255, 255, 255, 0.8)",
     mobileMenu: "rgba(100, 100, 111, 0.1) 0px 7px 29px 0px",
-    subtle: "rgba(0, 0, 0, 0.04) 0px 3px 5px"
+    subtle: "rgba(0, 0, 0, 0.04) 0px 3px 5px",
+    // Neumorphic circle shadows
+    neumorphicLight: "8px 8px 20px #a9a8b7, -8px -8px 20px #fff",
+    neumorphicLightHover: "8px 8px 20px #a9a8b7, -8px -8px 20px #fff, inset -8px -8px 20px #fff, inset 8px 8px 20px #a9a8b7",
+    neumorphicDark: "8px 8px 20px rgba(0, 0, 0, 0.5), -8px -8px 20px rgba(255, 255, 255, 0.1)",
+    neumorphicDarkHover: "8px 8px 20px rgba(0, 0, 0, 0.5), -8px -8px 20px rgba(255, 255, 255, 0.2), inset 8px 8px 20px rgba(0, 0, 0, 0.8), inset -8px -8px 20px rgba(255, 255, 255, 0.2)"
   },
   transitions: {
     default: "all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)",

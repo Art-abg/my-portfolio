@@ -7,6 +7,7 @@ import { Helmet } from "react-helmet-async";
 import { useTheme } from "styled-components";
 import { FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
 import profileImg from "../assets/Artur_profile_photo.png";
+import NeumorphicSection from "../components/sections/NeumorphicSection";
 
 // Styled components
 const HomeContainer = styled.div`
@@ -736,6 +737,7 @@ const Home = () => {
           </NeumorphicCard>
         </HeroSection>
       </HomeContainer>
+      <NeumorphicSection />
     </>
   );
 };
