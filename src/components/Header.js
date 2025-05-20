@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
 import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import { FaTimes, FaHome, FaUser, FaProjectDiagram, FaEnvelope } from "react-icons/fa";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import ToggleSwitch from "./common/ToggleSwitch";
 import Logo from "./Logo";
 
@@ -277,6 +277,7 @@ const Header = ({ currentTheme = 'light', toggleTheme = () => {} }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const menuControls = useAnimation();
   const hamburgerControls = useAnimation();
   
@@ -352,10 +353,10 @@ const Header = ({ currentTheme = 'light', toggleTheme = () => {} }) => {
   const handleNavigation = (e, path) => {
     e.preventDefault();
     closeMenu();
-    // Use a small timeout to ensure the menu closes before navigation
-    setTimeout(() => {
-      window.location.href = path;
-    }, 50);
+    // Use requestAnimationFrame to ensure smooth transition
+    requestAnimationFrame(() => {
+      navigate(path);
+    });
   };
 
   return (

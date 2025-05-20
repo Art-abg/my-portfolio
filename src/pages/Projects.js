@@ -92,10 +92,14 @@ const projectsData = [
 ];
 
 const ProjectsSection = styled.section`
-  padding: 6rem 2rem;
-  background-color: ${({ theme }) => theme.colors.backgroundAlt};
+  padding: 6rem 1rem;
+  background-color: ${({ theme }) => theme.colors.background};
   color: ${({ theme }) => theme.colors.text};
   min-height: 100vh;
+  
+  @media (max-width: 768px) {
+    padding: 5rem 0.5rem;
+  }
 `;
 
 const SectionTitle = styled(motion.h2)`
@@ -195,29 +199,48 @@ const FilterButton = styled(motion.button).withConfig({
 
 const ProjectsGrid = styled.div`
   display: grid;
-  gap: 2.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  max-width: 1200px;
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 1.5rem;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    padding: 0 1rem;
+    gap: 1.5rem;
+  }
+  
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (min-width: 1440px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
 `;
 
 const ProjectCard = styled(motion.div)`
-  background-color: ${({ theme }) => theme.colors.background};
+  background-color: ${({ theme }) => theme.colors.cardBackground || theme.colors.background};
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: ${({ theme }) => theme.shadows.card};
-  transition: all 0.4s ease;
+  box-shadow: ${({ theme }) => theme.shadows.card || '0 4px 6px rgba(0, 0, 0, 0.1)'};
+  transition: all 0.3s ease;
   position: relative;
   height: 100%;
   display: flex;
   flex-direction: column;
-  border: 1px solid transparent;
+  border: 1px solid ${({ theme }) => theme.colors.border || 'rgba(0, 0, 0, 0.1)'};
+  overflow: hidden;
 
   &:hover {
-    transform: translateY(-10px);
-    box-shadow: ${({ theme }) => theme.shadows.cardHover};
-    border-color: ${({ theme }) => `${theme.colors.primary}30`};
+    transform: translateY(-5px);
+    box-shadow: ${({ theme }) => theme.shadows.cardHover || '0 10px 20px rgba(0, 0, 0, 0.15)'};
+    border-color: ${({ theme }) => `${theme.colors.primary || '#4f46e5'}30`};
+  }
+  
+  @media (max-width: 480px) {
+    border-radius: 12px;
   }
 `;
 
@@ -264,12 +287,13 @@ const ProjectContent = styled.div`
 `;
 
 const ProjectTitle = styled.h3`
-  font-size: 1.75rem;
-  margin-bottom: 1rem;
-  color: ${({ theme }) => theme.colors.text};
-  font-family: ${({ theme }) => theme.fonts.headings};
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: ${({ theme }) => theme.colors.text || '#1a202c'};
+  font-family: ${({ theme }) => theme.fonts?.headings || 'sans-serif'};
   position: relative;
   display: inline-block;
+  line-height: 1.3;
   
   &::after {
     content: '';
@@ -278,45 +302,77 @@ const ProjectTitle = styled.h3`
     left: 0;
     width: 40px;
     height: 3px;
-    background: linear-gradient(90deg, ${({ theme }) => theme.colors.primary}, ${({ theme }) => theme.colors.accent});
+    background: linear-gradient(
+      90deg, 
+      ${({ theme }) => theme.colors.primary || '#4f46e5'}, 
+      ${({ theme }) => theme.colors.accent || '#7c3aed'}
+    );
     border-radius: 3px;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 1.3rem;
   }
 `;
 
 const ProjectDescription = styled.p`
-  font-size: 1rem;
-  color: ${({ theme }) => theme.colors.textSecondary};
-  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  color: ${({ theme }) => theme.colors.textSecondary || '#4a5568'};
+  margin-bottom: 1.25rem;
+  line-height: 1.6;
+  
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
 `;
 
 const Technologies = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+  
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
 `;
 
 const TechIcon = styled(motion.div)`
-  font-size: 1.5rem;
-  color: ${({ theme }) => theme.colors.primary};
-  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   gap: 0.3rem;
-  background-color: ${({ theme }) => `${theme.colors.primary}10`};
-  padding: 0.3rem 0.6rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
+  background-color: ${({ theme }) => `${theme.colors.primary || '#4f46e5'}10`};
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: ${({ theme }) => theme.colors.primary || '#4f46e5'};
   cursor: default;
+  transition: all 0.2s ease;
+  white-space: nowrap;
   
   svg {
-    color: ${({ theme }) => theme.colors.primary};
-    font-size: 1.2rem;
+    color: ${({ theme }) => theme.colors.primary || '#4f46e5'};
+    font-size: 1rem;
+  }
+  
+  span {
+    font-size: 0.8em;
   }
   
   &:hover {
-    transform: translateY(-3px);
-    background-color: ${({ theme }) => `${theme.colors.primary}20`};
+    transform: translateY(-2px);
+    background-color: ${({ theme }) => `${theme.colors.primary || '#4f46e5'}15`};
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.75rem;
+    
+    svg {
+      font-size: 0.9rem;
+    }
   }
 `;
 

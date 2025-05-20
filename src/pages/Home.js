@@ -21,43 +21,55 @@ const HeroSection = styled.section`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 2rem;
+  padding: 1rem;
   overflow: hidden;
+  
+  @media (max-width: 768px) {
+    padding: 0.5rem;
+    align-items: flex-start;
+    padding-top: 5rem;
+  }
 `;
 
 const NeumorphicCard = styled(motion.div)`
-  background: ${({ theme }) =>
-    theme && theme.colors ? theme.colors.cardBackground : "#e0e5ec"};
-  border-radius: 30px;
-  box-shadow: ${({ theme }) =>
-    theme && theme.colors && theme.colors.neumorphicFlat
-      ? theme.colors.neumorphicFlat
-      : "2px 2px 5px rgba(0,0,0,0.1)"}; /* Restored, with fallback */
-  padding: 3.5rem;
+  background: ${({ theme }) => theme?.colors?.cardBackground || "#e0e5ec"};
+  border-radius: 24px;
+  box-shadow: ${({ theme }) => 
+    theme?.shadows?.card || 
+    '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'};
+  padding: 2.5rem;
   max-width: 1200px;
   width: 100%;
   position: relative;
   z-index: 2;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 3rem;
+  gap: 2.5rem;
+  margin: 0 auto;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid ${({ theme }) => theme?.colors?.border || 'rgba(255, 255, 255, 0.2)'};
 
-  @media (max-width: ${({ theme }) =>
-      theme && theme.breakpoints ? theme.breakpoints.md : "992px"}) {
+  @media (max-width: 992px) {
     grid-template-columns: 1fr;
     padding: 2rem;
     max-width: 95%;
+    gap: 2rem;
   }
 
-  @media (max-width: ${({ theme }) =>
-      theme && theme.breakpoints ? theme.breakpoints.sm : "576px"}) {
-    padding: 1.2rem;
+  @media (max-width: 768px) {
+    padding: 1.5rem;
     border-radius: 20px;
     gap: 1.5rem;
-    box-shadow: ${({ theme }) =>
-      theme && theme.colors
-        ? `0 8px 32px 0 ${theme.colors.shadowLight}`
-        : "0 8px 32px 0 rgba(0, 0, 0, 0.1)"};
+    margin-top: 1rem;
+    max-width: 100%;
+    border-radius: 16px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 1.25rem;
+    border-radius: 14px;
+    gap: 1.25rem;
   }
 `;
 
@@ -78,10 +90,15 @@ const ImageSection = styled(motion.div)`
   justify-content: center;
   position: relative;
   z-index: 1;
+  padding: 0 1rem;
 
-  @media (max-width: ${({ theme }) =>
-      theme && theme.breakpoints ? theme.breakpoints.md : "992px"}) {
+  @media (max-width: 992px) {
     order: 1;
+    margin-bottom: 1rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0 0.5rem;
   }
 `;
 
@@ -89,17 +106,22 @@ const NeumorphicImageContainer = styled(motion.div)`
   width: 100%;
   height: auto;
   aspect-ratio: 1/1.2;
-  border-radius: 20px;
+  border-radius: 16px;
   position: relative;
   overflow: hidden;
-  box-shadow: ${({ theme }) =>
-    theme && theme.colors && theme.colors.neumorphicFlat
-      ? theme.colors.neumorphicFlat
-      : "2px 2px 5px rgba(0,0,0,0.1)"}; /* Restored, with fallback */
+  box-shadow: ${({ theme }) => theme?.shadows?.card || '0 4px 6px rgba(0, 0, 0, 0.1)'};
+  max-width: 400px;
+  margin: 0 auto;
+  border: 1px solid ${({ theme }) => theme?.colors?.border || 'rgba(255, 255, 255, 0.2)'};
 
-  @media (max-width: ${({ theme }) =>
-      theme && theme.breakpoints ? theme.breakpoints.sm : "576px"}) {
+  @media (max-width: 992px) {
+    max-width: 350px;
+    aspect-ratio: 1/1.15;
+  }
+  
+  @media (max-width: 480px) {
     aspect-ratio: 1/1.1;
+    border-radius: 14px;
   }
 
   &::before {
@@ -198,9 +220,15 @@ const Name = styled(motion.h1)`
     font-size: 2.5rem;
   }
 
-  @media (max-width: ${({ theme }) =>
-      theme && theme.breakpoints ? theme.breakpoints.sm : "768px"}) {
+  @media (max-width: 768px) {
     font-size: 2rem;
+    margin-bottom: 0.75rem;
+    text-align: center;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
   }
 `;
 
@@ -213,9 +241,15 @@ const Subtitle = styled(motion.div)`
     theme && theme.fonts ? theme.fonts.body : "sans-serif"};
   position: relative;
 
-  @media (max-width: ${({ theme }) =>
-      theme && theme.breakpoints ? theme.breakpoints.sm : "768px"}) {
-    font-size: 1.3rem;
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.1rem;
+    margin-bottom: 1.25rem;
   }
 `;
 
@@ -228,9 +262,17 @@ const Description = styled(motion.p)`
   max-width: 600px;
   position: relative;
 
-  @media (max-width: ${({ theme }) =>
-      theme && theme.breakpoints ? theme.breakpoints.sm : "768px"}) {
+  @media (max-width: 768px) {
     font-size: 1rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    padding: 0 0.5rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 1.25rem;
   }
 `;
 
@@ -239,11 +281,12 @@ const ButtonContainer = styled(motion.div)`
   gap: 1rem;
   margin-top: 2rem;
 
-  @media (max-width: ${({ theme }) =>
-      theme && theme.breakpoints ? theme.breakpoints.sm : "768px"}) {
+  @media (max-width: 768px) {
     flex-direction: column;
     gap: 0.8rem;
     width: 100%;
+    margin-top: 1.5rem;
+    padding: 0 0.5rem;
   }
 `;
 
@@ -355,12 +398,12 @@ const NeumorphicButton = styled(motion.button).withConfig({
     font-size: 1.1rem;
   }
 
-  @media (max-width: ${({ theme }) =>
-      theme && theme.breakpoints ? theme.breakpoints.sm : "768px"}) {
+  @media (max-width: 768px) {
     width: 100%;
     padding: 0.9rem 1rem;
     font-size: 0.95rem;
-    border-radius: 10px;
+    border-radius: 12px;
+    margin: 0;
   }
 `;
 
@@ -368,11 +411,17 @@ const SocialContainer = styled(motion.div)`
   display: flex;
   gap: 1rem;
   margin-top: 2rem;
+  justify-content: center;
+  
+  @media (max-width: 768px) {
+    margin-top: 1.5rem;
+    padding: 0 0.5rem;
+  }
 `;
 
 const SocialButton = styled(motion.a)`
-  width: 50px;
-  height: 50px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -381,22 +430,28 @@ const SocialButton = styled(motion.a)`
     theme && theme.colors ? theme.colors.cardBackground : "#e0e5ec"};
   color: ${({ theme }) =>
     theme && theme.colors ? theme.colors.text : "#333333"};
-  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1); /* TEMP DEBUG */
+  box-shadow: ${({ theme }) => theme?.shadows?.card || '0 2px 4px rgba(0,0,0,0.1)'};
   transition: ${({ theme }) =>
-    theme && theme.transitions ? theme.transitions.default : "all 0.3s ease"};
+    theme?.transitions?.default || "all 0.3s ease"};
   cursor: pointer;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
+  will-change: transform;
 
   &:hover {
     transform: translateY(-3px);
-    color: ${({ theme }) =>
-      theme && theme.colors ? theme.colors.primary : "#4277FF"};
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15); /* TEMP DEBUG */
+    color: ${({ theme }) => theme?.colors?.primary || "#4277FF"};
+    box-shadow: ${({ theme }) => theme?.shadows?.cardHover || '0 4px 8px rgba(0,0,0,0.15)'};
   }
 
   &:active {
     transform: translateY(0);
-    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.1); /* TEMP DEBUG */
+    box-shadow: ${({ theme }) => theme?.shadows?.card || '0 2px 4px rgba(0,0,0,0.1)'};
+  }
+  
+  @media (max-width: 480px) {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
   }
 `;
 
