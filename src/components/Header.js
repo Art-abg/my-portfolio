@@ -170,21 +170,25 @@ const MobileMenu = styled(motion.div)`
   position: fixed;
   top: 0;
   right: 0;
-  width: 80%;
-  max-width: 300px;
+  width: 85%;
+  max-width: 320px;
   height: 100vh;
-  background: ${({ theme }) => theme.colors.background};
+  background: ${({ theme }) => theme.colors.background}ee;
   display: flex;
   flex-direction: column;
-  padding: 5rem 2rem 2rem;
+  padding: 6rem 1.5rem 2rem;
   z-index: 1000;
   box-shadow: ${({ theme }) => theme.shadows.mobileMenu};
   overflow-y: auto;
-  will-change: transform;
+  will-change: transform, opacity;
   pointer-events: auto;
   border-left: ${({ theme }) => theme.colors.glassBorder};
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transform: translate3d(0, 0, 0);
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  -webkit-transform: translateZ(0);
 `;
 
 const MobileNavList = styled.ul`
@@ -201,31 +205,43 @@ const MobileNavItem = styled.li``;
 const MobileNavLink = styled(motion.div)`
   color: ${({ theme, $isActive }) => $isActive ? theme.colors.primary : theme.colors.headerText};
   text-decoration: none;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: ${({ $isActive }) => $isActive ? '600' : '500'};
-  transition: ${({ theme }) => theme.transitions.default};
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: ${({ theme }) => theme.fonts.body};
-  padding: 1rem 1.2rem;
-  border-radius: 16px;
+  padding: 1.1rem 1.5rem;
+  border-radius: 14px;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  background-color: ${({ theme, $isActive }) => $isActive ? `${theme.colors.primary}15` : 'transparent'};
+  gap: 1.2rem;
+  background-color: ${({ theme, $isActive }) => $isActive ? `${theme.colors.primary}15` : 'rgba(255, 255, 255, 0.03)'};
   box-shadow: ${({ theme, $isActive }) => $isActive ? theme.colors.neumorphicInset : 'none'};
   width: 100%;
   cursor: pointer;
+  margin-bottom: 0.5rem;
+  will-change: transform, background-color, color;
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translateZ(0);
   
   svg {
     color: ${({ theme, $isActive }) => $isActive ? theme.colors.primary : theme.colors.textSecondary};
-    transition: ${({ theme }) => theme.transitions.default};
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 1.2em;
+    flex-shrink: 0;
+  }
+  
+  &:active {
+    transform: scale(0.98) !important;
   }
   
   &:hover {
     color: ${({ theme }) => theme.colors.primary};
-    background-color: ${({ theme }) => `${theme.colors.primary}10`};
+    background-color: ${({ theme }) => `${theme.colors.primary}15`};
+    transform: translateX(4px);
     
     svg {
       color: ${({ theme }) => theme.colors.primary};
+      transform: scale(1.1);
     }
   }
 `;
@@ -268,10 +284,14 @@ const Overlay = styled(motion.div)`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.7);
   z-index: 999;
   pointer-events: auto;
   -webkit-tap-highlight-color: transparent;
+  will-change: opacity;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  opacity: 0;
 `;
 
 const Header = ({ currentTheme = 'light', toggleTheme = () => {} }) => {
@@ -281,6 +301,14 @@ const Header = ({ currentTheme = 'light', toggleTheme = () => {} }) => {
   const navigate = useNavigate();
   
   const isDark = currentTheme === 'dark';
+
+  // Navigation links
+  const navLinks = [
+    { path: "/", label: "Home", icon: <FaHome /> },
+    { path: "/about", label: "About", icon: <FaUser /> },
+    { path: "/projects", label: "Projects", icon: <FaProjectDiagram /> },
+    { path: "/contact", label: "Contact", icon: <FaEnvelope /> },
+  ];
 
   // Add scroll effect to header
   useEffect(() => {
@@ -380,21 +408,46 @@ const Header = ({ currentTheme = 'light', toggleTheme = () => {} }) => {
       <AnimatePresence>
         {menuOpen && (
           <>
-            <Overlay 
+            <Overlay
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={closeMenu}
-              transition={{ duration: 0.2 }}
+              transition={{
+                duration: 0.25,
+                ease: [0.4, 0, 0.2, 1]
+              }}
             />
             <MobileMenu
               initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              animate={{
+                x: 0,
+                transition: {
+                  type: "spring",
+                  damping: 30,
+                  stiffness: 300,
+                  mass: 0.5
+                }
+              }}
+              exit={{
+                x: "100%",
+                transition: {
+                  type: "spring",
+                  damping: 30,
+                  stiffness: 300,
+                  mass: 0.5
+                }
+              }}
+              transition={{
+                type: "spring",
+                damping: 30,
+                stiffness: 300,
+                mass: 0.5
+              }}
+              onClick={(e) => e.stopPropagation()}
             >
-              <CloseButton 
-                onClick={closeMenu} 
+              <CloseButton
+                onClick={closeMenu}
                 aria-label="Close Menu"
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.95 }}
@@ -402,59 +455,53 @@ const Header = ({ currentTheme = 'light', toggleTheme = () => {} }) => {
               >
                 <FaTimes size={20} />
               </CloseButton>
+              
               <MobileNavList>
-                <MobileNavItem>
-                  <MobileNavLink 
-                    $isActive={location.pathname === "/"}
-                    onClick={(e) => handleNavigation(e, '/')}
-                    whileHover={{ x: 5 }}
-                    whileTap={{ scale: 0.98 }}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.1 }}
-                  >
-                    <FaHome size={18} /> Home
-                  </MobileNavLink>
-                </MobileNavItem>
-                <MobileNavItem>
-                  <MobileNavLink 
-                    $isActive={location.pathname === "/about"}
-                    onClick={(e) => handleNavigation(e, '/about')}
-                    whileHover={{ x: 5 }}
-                    whileTap={{ scale: 0.98 }}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    <FaUser size={18} /> About
-                  </MobileNavLink>
-                </MobileNavItem>
-                <MobileNavItem>
-                  <MobileNavLink 
-                    $isActive={location.pathname === "/projects"}
-                    onClick={(e) => handleNavigation(e, '/projects')}
-                    whileHover={{ x: 5 }}
-                    whileTap={{ scale: 0.98 }}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.3 }}
-                  >
-                    <FaProjectDiagram size={18} /> Projects
-                  </MobileNavLink>
-                </MobileNavItem>
-                <MobileNavItem>
-                  <MobileNavLink 
-                    $isActive={location.pathname === "/contact"}
-                    onClick={(e) => handleNavigation(e, '/contact')}
-                    whileHover={{ x: 5 }}
-                    whileTap={{ scale: 0.98 }}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.4 }}
-                  >
-                    <FaEnvelope size={18} /> Contact
-                  </MobileNavLink>
-                </MobileNavItem>
+                {navLinks.map((link, index) => (
+                  <MobileNavItem key={link.path}>
+                    <MobileNavLink
+                      as={motion.div}
+                      $isActive={location.pathname === link.path}
+                      onClick={(e) => handleNavigation(e, link.path)}
+                      whileHover={{
+                        scale: 1.03,
+                        transition: { duration: 0.15 }
+                      }}
+                      whileTap={{
+                        scale: 0.98,
+                        transition: { duration: 0.1 }
+                      }}
+                      initial={{ opacity: 0, x: 30 }}
+                      animate={{
+                        opacity: 1,
+                        x: 0,
+                        transition: {
+                          delay: 0.05 * index + 0.1,
+                          type: "spring",
+                          stiffness: 120,
+                          damping: 15,
+                          mass: 0.5
+                        }
+                      }}
+                      exit={{
+                        opacity: 0,
+                        x: 30,
+                        transition: {
+                          duration: 0.15,
+                          ease: "easeIn"
+                        }
+                      }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 120,
+                        damping: 15,
+                        mass: 0.5
+                      }}
+                    >
+                      {link.icon} {link.label}
+                    </MobileNavLink>
+                  </MobileNavItem>
+                ))}
               </MobileNavList>
             </MobileMenu>
           </>
