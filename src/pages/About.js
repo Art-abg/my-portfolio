@@ -21,7 +21,7 @@ import {
   SiMui,
   SiFramer
 } from "react-icons/si";
-import ProfileImage from "../assets/Artur_profile_photo.png";
+import profileImgPng from "../assets/Artur_profile_photo.png";
 import ResumePDF from "../assets/Resume_Artur_Abgaryan.pdf";
 
 // Timeline data
@@ -494,7 +494,15 @@ const About = () => {
             transition={{ duration: 0.5 }}
             whileHover={{ scale: 1.02 }}
           >
-            <img src={ProfileImage} alt="Artur Abgaryan" />
+            <picture>
+              <source srcSet="/assets/Artur_profile_photo.webp" type="image/webp" />
+              <img src={profileImgPng} alt="Artur Abgaryan" style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                borderRadius: "15px",
+              }} />
+            </picture>
           </ProfileImageWrapper>
 
           <BioContent>

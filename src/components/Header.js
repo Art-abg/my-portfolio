@@ -355,7 +355,7 @@ const Header = ({ currentTheme = 'light', toggleTheme = () => {} }) => {
       <LogoLink to="/" aria-label="Home">
         <Logo />
       </LogoLink>
-      <Nav>
+      <Nav aria-label="Main navigation">
         <NavList>
           <NavItem>
             <NavLinkStyled to="/" $isActive={location.pathname === "/"}>
@@ -387,6 +387,7 @@ const Header = ({ currentTheme = 'light', toggleTheme = () => {} }) => {
           onClick={handleMenuToggle} 
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={menuOpen}
+          aria-controls="mobile-menu"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           type="button"
@@ -419,6 +420,7 @@ const Header = ({ currentTheme = 'light', toggleTheme = () => {} }) => {
               }}
             />
             <MobileMenu
+              id="mobile-menu"
               initial={{ x: "100%" }}
               animate={{
                 x: 0,

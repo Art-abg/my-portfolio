@@ -6,7 +6,7 @@ import { TypeAnimation } from "react-type-animation";
 import { Helmet } from "react-helmet-async";
 import { useTheme } from "styled-components";
 import { FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
-import profileImg from "../assets/Artur_profile_photo.png";
+import profileImgPng from "../assets/Artur_profile_photo.png";
 import NeumorphicSection from "../components/sections/NeumorphicSection";
 
 // Styled components
@@ -156,7 +156,7 @@ const NeumorphicImageContainer = styled(motion.div)`
   }
 `;
 
-const ProfileImage = styled(motion.img)`
+const ProfileImageContainer = styled(motion.div)`
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -725,16 +725,28 @@ const Home = () => {
                   ease: "easeInOut"
                 }}
               >
-                <ProfileImage
-                  src={profileImg}
-                  alt="Art Abgaryan"
-                  animate={{ scale: [1, 1.015, 1] }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    repeatType: "reverse"
-                  }}
-                />
+                <ProfileImageContainer
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+                >
+                  <picture>
+                    <source
+                      srcSet="/assets/Artur_profile_photo.webp"
+                      type="image/webp"
+                    />
+                    <img
+                      src={profileImgPng}
+                      alt="Artur Abgaryan"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        borderRadius: "15px",
+                      }}
+                    />
+                  </picture>
+                </ProfileImageContainer>
               </NeumorphicImageContainer>
             </ImageSection>
           </NeumorphicCard>

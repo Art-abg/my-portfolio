@@ -122,11 +122,11 @@ const Footer = () => {
     <FooterContainer>
       <FooterContent>
         <FooterLinks>
-          <FooterLink href="#" rel="noopener noreferrer">Home</FooterLink>
-          <FooterLink href="#" rel="noopener noreferrer">About</FooterLink>
-          <FooterLink href="#" rel="noopener noreferrer">Projects</FooterLink>
-          <FooterLink href="#" rel="noopener noreferrer">Resume</FooterLink>
-          <FooterLink href="#" rel="noopener noreferrer">Contact</FooterLink>
+          <FooterLink href="/" rel="noopener noreferrer" aria-label="Home page">Home</FooterLink>
+          <FooterLink href="/about" rel="noopener noreferrer" aria-label="About page">About</FooterLink>
+          <FooterLink href="/projects" rel="noopener noreferrer" aria-label="Projects page">Projects</FooterLink>
+          <FooterLink href="/resume" rel="noopener noreferrer" aria-label="Resume page">Resume</FooterLink>
+          <FooterLink href="/contact" rel="noopener noreferrer" aria-label="Contact page">Contact</FooterLink>
         </FooterLinks>
         
         <SocialLinks>
@@ -136,6 +136,7 @@ const Footer = () => {
             rel="noopener noreferrer"
             whileHover="hover"
             variants={iconVariants}
+            aria-label="GitHub profile"
           >
             <FaGithub />
           </SocialIcon>
@@ -145,6 +146,7 @@ const Footer = () => {
             rel="noopener noreferrer"
             whileHover="hover"
             variants={iconVariants}
+            aria-label="LinkedIn profile"
           >
             <FaLinkedin />
           </SocialIcon>
@@ -154,6 +156,7 @@ const Footer = () => {
             rel="noopener noreferrer"
             whileHover="hover"
             variants={iconVariants}
+            aria-label="Twitter profile"
           >
             <FaTwitter />
           </SocialIcon>
@@ -163,6 +166,7 @@ const Footer = () => {
             rel="noopener noreferrer"
             whileHover="hover"
             variants={iconVariants}
+            aria-label="Email Artur Abgaryan"
           >
             <FaEnvelope />
           </SocialIcon>
