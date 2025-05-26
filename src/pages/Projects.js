@@ -41,51 +41,46 @@ const techIcons = {
 const projectsData = [
   {
     id: 1,
-    title: "AI Realistic Portrait Generator",
-    description: "Full-stack web application allowing users to generate realistic portraits via Flux AI model integration and LORA fine-tuning.",
-    image: "/images/ai-portrait-generator.jpg",
-    repoLink: "https://github.com/Art-abg/ai-portrait-generator",
-    liveLink: "https://ai-portrait.example.com",
-    technologies: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Node.js"],
+    title: "AI Photo Studio",
+    description: "Advanced AI-powered photo editing platform with automated background removal, enhancement, and style transfer capabilities.",
+    image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    repoLink: "https://github.com/Art-abg/ai-photostudio",
+    technologies: ["React", "Node.js", "TensorFlow.js", "CSS3"],
     category: "fullstack"
   },
   {
     id: 2,
-    title: "Bonton AI Trading Dashboard",
-    description: "Dynamic and responsive UI for visualizing complex real-time trading data, integrating multiple financial data APIs.",
-    image: "/images/trading-dashboard.jpg",
-    repoLink: "https://github.com/Art-abg/bonton-trading",
-    liveLink: "https://bonton-trading.example.com",
-    technologies: ["React", "Material UI", "JavaScript", "REST APIs"],
-    category: "frontend"
+    title: "LilArt Photo Studio",
+    description: "Professional photography studio website showcasing portfolios, booking system, and client gallery.",
+    image: "https://images.unsplash.com/photo-1513151233551-47dbde48a2a9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    repoLink: "https://github.com/Art-abg/lilart_photo_studio",
+    technologies: ["React", "Express", "MongoDB", "Node.js"],
+    category: "fullstack"
   },
   {
     id: 3,
-    title: "ACA Team Project Task Management App",
-    description: "Developed core UI components and enabled intuitive task organization through drag-and-drop functionality.",
-    image: "/images/task-management.jpg",
-    repoLink: "https://github.com/Art-abg/aca-task-management",
-    liveLink: "https://aca-tasks.example.com",
-    technologies: ["React", "Redux", "JavaScript", "CSS3"],
+    title: "Trading Dashboard",
+    description: "Real-time cryptocurrency and stock market tracking dashboard with portfolio management and analytics.",
+    image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    repoLink: "https://github.com/Art-abg/trading-dashboard",
+    technologies: ["React", "TypeScript", "Redux", "D3.js"],
     category: "frontend"
   },
   {
     id: 4,
-    title: "Website for LilArt Photo Studio",
-    description: "Visually engaging, multi-language portfolio website with a seamless responsive experience.",
-    image: "/images/lilart-studio.jpg",
-    repoLink: "https://github.com/Art-abg/lilart-studio",
-    liveLink: "https://lilart-studio.example.com",
-    technologies: ["React", "Tailwind CSS", "Framer Motion", "HTML5"],
-    category: "frontend"
+    title: "AMMA Track",
+    description: "Comprehensive project management and task tracking application with team collaboration features.",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2015&q=80",
+    repoLink: "https://github.com/manevardazaryan1/AMMA-Track",
+    technologies: ["React", "Node.js", "MongoDB", "Express"],
+    category: "fullstack"
   },
   {
     id: 5,
     title: "Interactive Data Visualization Tool",
     description: "Advanced data visualization dashboard with interactive charts and filtering capabilities.",
-    image: "/images/data-viz.jpg",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
     repoLink: "https://github.com/Art-abg/data-viz-tool",
-    liveLink: "https://data-viz.example.com",
     technologies: ["React", "D3.js", "TypeScript", "CSS3"],
     category: "frontend"
   }
