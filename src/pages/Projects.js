@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import styled, { keyframes } from "styled-components";
 import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import {
@@ -9,30 +9,32 @@ import {
   FaInfoCircle,
   FaClock,
   FaTimes,
-  FaCalendarAlt,
+  FaChevronLeft,
+  FaChevronRight,
   FaCheckCircle,
+  FaCalendarAlt,
+  FaAws
 } from "react-icons/fa";
 import {
+  SiTypescript,
   SiReact,
   SiJavascript,
-  SiTypescript,
-  SiNodedotjs,
-  SiMongodb,
-  SiExpress,
   SiHtml5,
   SiCss3,
+  SiNodedotjs,
+  SiExpress,
+  SiMongodb,
+  SiFirebase,
   SiDocker,
   SiNextdotjs,
   SiTailwindcss,
+  SiMui,
   SiRedux,
   SiFramer,
   SiGraphql,
-  SiFirebase,
-  SiAmazonwebservices,
   SiSass,
   SiVercel
 } from "react-icons/si";
-import { SiMui } from "react-icons/si";
 
 const floatKeyframes = keyframes`
   0% { transform: translate(0, 0) scale(1); }
@@ -853,7 +855,7 @@ const techIcons = {
   "D3.js": <SiJavascript />,
   GraphQL: <SiGraphql />,
   Firebase: <SiFirebase />,
-  AWS: <SiAmazonwebservices />,
+  AWS: <FaAws />,
   SASS: <SiSass />,
   Vercel: <SiVercel />
 };
@@ -1066,8 +1068,7 @@ const Projects = () => {
                   </Links>
                 </ProjectContent>
               </ProjectCard>
-            ))
-          })}
+            ))}
         </AnimatePresence>
         
         {/* Project Modal */}
@@ -1109,7 +1110,7 @@ const Projects = () => {
                           prevImage();
                         }}
                       >
-                        <span>&lt;</span>
+                        <FaChevronLeft />
                       </ModalImageNavButton>
                       
                       <ModalImageNavButton 
@@ -1119,7 +1120,7 @@ const Projects = () => {
                           nextImage();
                         }}
                       >
-                        <span>&gt;</span>
+                        <FaChevronRight />
                       </ModalImageNavButton>
                       
                       <ModalImageIndicator>
